@@ -12,3 +12,11 @@
  
  ## User manual
  **_Under developement_**
+
+ ## Output example:
+
+![First test](./control_test_1.png)
+
+### Contact info:
+
+**Author** Jean Matias || **email**: jean.matias@tyndall.ie
