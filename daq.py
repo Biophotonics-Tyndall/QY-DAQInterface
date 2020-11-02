@@ -1,35 +1,70 @@
 import nidaqmx as mx
 import pandas as pd
 import matplotlib.pyplot as pl
+import numpy as np
+import time
 
-""" with mx.Task() as task:
-    task.ao_channels.add_ao_voltage_chan('Dev1/ao0')
-    task.write([2.2, 1.1], auto_start=True)
-    
-with mx.Task() as task:
-    task.ai_channels.add_ai_voltage_chan('Dev1/ai0')
-    print(task.read()
- """
+# Debug
+debugging = False
+
+
 dataDc = {'0': [], '1':[], '2': [], '3': []}
-for i in [0, 1, 2]:
-    task = mx.Task('1')
-    task.ao_channels.add_ao_voltage_chan('Dev1/ao0')
-    task.write([i], auto_start=True)
-    task.stop()
-    task.close()
 
-    task1 = mx.Task('2')
-    task1.ai_channels.add_ai_voltage_chan('Dev1/ai0:3')
-    data = task1.read(5)
-    dataDc['0'] += data[0]
-    dataDc['1'] += data[1]
-    dataDc['2'] += data[2]
-    dataDc['3'] += data[3]
+# GLOBAL PARAMS
+STARTING_RANGE = 0.0 # V
+ENDING_RANGE = 5.0 # V
+STEPS_SIZE = 0.1 # V
 
-    task1.stop()
-    task1.close()
+SAMPLES_PER_CH = 100
+TIME_BEFORE_START_ACQUIS = 0.0 # s
+
+taskMaster = mx.Task('Master')
+taskMaster.ao_channels.add_ao_voltage_chan('Dev1/ao0')
+
+taskSlave = mx.Task('Slave')
+taskSlave.ai_channels.add_ai_voltage_chan('Dev1/ai0:3')
+
+def acquire(
+    outRange=[STARTING_RANGE, ENDING_RANGE],
+    stepSize=STEPS_SIZE,
+    samplesPerCh=SAMPLES_PER_CH
+    ):
+
+    # if not debugging:
+        
+    outputArr = np.arange(*outRange, stepSize)
+
+    # measure time
+    timeBeforeTask = []
+    timeAfterTask = []
 
 
+    for val in outputArr:
+        timeBeforeTask.append([time.time_ns()])
+        taskMaster.write([val], auto_start=True)
+        taskMaster.stop()
+        timeAfterTask.append([time.time_ns()])
+
+        timeBeforeTask.append([time.time_ns()])
+        data = taskSlave.read(samplesPerCh)
+        taskSlave.stop()
+        timeAfterTask.append([time.time_ns()])
+        
+        dataDc['0'] += data[0]
+        dataDc['1'] += data[1]
+        dataDc['2'] += data[2]
+        dataDc['3'] += data[3]
+    taskMaster.close()
+    taskSlave.close()
+    print('Done!')
+
+t0 = time.time_ns()
+acquire()
+tf = time.time_ns()
+
+print(f'Exp concluded in: {(tf-t0) / 10**9} s')
+
+# plot results
 pl.ion()
 data = pd.DataFrame(dataDc)
 mrkr = ['o', 'v', 's', '>']

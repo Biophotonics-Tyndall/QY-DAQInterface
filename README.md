@@ -15,7 +15,7 @@
 
  ## Output example:
 
-![First test](./control_test_1.png)
+![First test](./output/control_test_1.png)
 
 ### Contact info:
 
