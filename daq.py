@@ -41,20 +41,23 @@ def acquire(
 
 
     for val in outputArr:
-        timeBeforeTask.append([time.time_ns()])
+        timeBeforeTask.append(time.time_ns() / 10 ** 9)
         taskMaster.write([val], auto_start=True)
         taskMaster.stop()
-        timeAfterTask.append([time.time_ns()])
+        # timeAfterTask.append(time.time_ns() / 10 ** 9)
 
-        timeBeforeTask.append([time.time_ns()])
+        # timeBeforeTask.append(time.time_ns() / 10 ** 9)
         data = taskSlave.read(samplesPerCh)
         taskSlave.stop()
-        timeAfterTask.append([time.time_ns()])
+        timeAfterTask.append(time.time_ns() / 10 ** 9)
         
         dataDc['0'] += data[0]
         dataDc['1'] += data[1]
         dataDc['2'] += data[2]
         dataDc['3'] += data[3]
+
+
+    taskMaster.write([0.0], auto_start=True)
     taskMaster.close()
     taskSlave.close()
     print('Done!')
@@ -70,9 +73,13 @@ pl.ion()
 data = pd.DataFrame(dataDc)
 mrkr = ['o', 'v', 's', '>']
 for i in range(4):
-    pl.plot(data.index, data[f'{i}'], label=f'Channel: {i}', mrkr[i], alpha=.5)
+    pl.plot(data.index, data[f'{i}'], label=f'Channel: {i}',
+    marker=mrkr[i], alpha=.5, linestyle='')
 
-plt.rcParams.update({'font.size': 22})
+pl.plot(data.iloc[::SAMPLES_PER_CH].index, timeBeforeTask, label='Time B4 task' marker='<',
+pl.plot(data.iloc[::SAMPLES_PER_CH].index, timeAfterTask, label='Time after task', marker='>')
+
+pl.rcParams.update({'font.size': 22})
 pl.legend()
 pl.xlabel('Acquisition #')
 pl.ylabel('Output (V)')
