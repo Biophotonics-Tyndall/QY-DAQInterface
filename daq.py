@@ -74,10 +74,15 @@ data = pd.DataFrame(dataDc)
 mrkr = ['o', 'v', 's', '>']
 for i in range(4):
     pl.plot(data.index, data[f'{i}'], label=f'Channel: {i}',
-    marker=mrkr[i], alpha=.5, linestyle='')
+        marker=mrkr[i], alpha=.5, linestyle='')
 
-pl.plot(data.iloc[::SAMPLES_PER_CH].index, timeBeforeTask, label='Time B4 task' marker='<',
-pl.plot(data.iloc[::SAMPLES_PER_CH].index, timeAfterTask, label='Time after task', marker='>')
+""" 
+pl.plot(data.iloc[::SAMPLES_PER_CH].index, np.asarray(timeBeforeTask) - timeBeforeTask[0], label='Time B4 task', marker='<')
+pl.plot(data.iloc[::SAMPLES_PER_CH].index, np.asarray(timeAfterTask) - timeBeforeTask[0], label='Time after task', marker='>')
+pl.legend()
+pl.xlabel('Acquisition #')
+pl.ylabel('Time (s)')
+ """
 
 pl.rcParams.update({'font.size': 22})
 pl.legend()
