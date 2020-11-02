@@ -19,4 +19,4 @@
 
 ### Contact info:
 
-**Author** Jean Matias || **email**: jean.matias@tyndall.ie
+**Author** Jean Matias || **email**: jean.matias@tyndall.ie 
