@@ -24,6 +24,10 @@ taskMaster.ao_channels.add_ao_voltage_chan('Dev1/ao0')
 taskSlave = mx.Task('Slave')
 taskSlave.ai_channels.add_ai_voltage_chan('Dev1/ai0:3')
 
+# measure time
+timeBeforeTask = []
+timeAfterTask = []
+
 def acquire(
     outRange=[STARTING_RANGE, ENDING_RANGE],
     stepSize=STEPS_SIZE,
@@ -34,9 +38,6 @@ def acquire(
         
     outputArr = np.arange(*outRange, stepSize)
 
-    # measure time
-    timeBeforeTask = []
-    timeAfterTask = []
 
 
     for val in outputArr:
@@ -69,8 +70,9 @@ pl.ion()
 data = pd.DataFrame(dataDc)
 mrkr = ['o', 'v', 's', '>']
 for i in range(4):
-    pl.plot(data.index, data[f'{i}'], label=f'Channel: {i}', marker=mrkr[i])
+    pl.plot(data.index, data[f'{i}'], label=f'Channel: {i}', mrkr[i], alpha=.5)
 
+plt.rcParams.update({'font.size': 22})
 pl.legend()
 pl.xlabel('Acquisition #')
 pl.ylabel('Output (V)')
