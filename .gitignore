@@ -6,3 +6,9 @@ data/
 
 # ignore .bat file
 *.bat
+
+# Ignore png files
+*.png
+
+# Ignore pdf files
+*.pdf

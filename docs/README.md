@@ -13,7 +13,7 @@ import time
 
 def measure():
     # replace `time.time()` for `time.time_ns()` for higher resolution
-    
+
     t0 = time.time()
     t1 = t0
     while t1 == t0:
@@ -23,3 +23,12 @@ def measure():
 resolution = np.mean([measure()[2] for i in range(1000)])
 
 ```
+
+# API NIDAQMX full reference
+
+[https://nidaqmx-python.readthedocs.io/en/latest/index.html](https://nidaqmx-python.readthedocs.io/en/latest/index.html)
+
+
+# Few examples available on
+
+[https://github.com/ni/nidaqmx-python/tree/master/nidaqmx_examples](https://github.com/ni/nidaqmx-python/tree/master/nidaqmx_examples)

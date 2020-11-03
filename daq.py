@@ -1,4 +1,7 @@
 import nidaqmx as mx
+from nidaqmx.constants import (
+    AcquisitionType, ChannelType, UsageTypeCI, EveryNSamplesEventType,
+    READ_ALL_AVAILABLE, UsageTypeCO, _Save)
 import pandas as pd
 import matplotlib.pyplot as pl
 import numpy as np
@@ -14,14 +17,20 @@ dataDc = {'0': [], '1':[], '2': [], '3': []}
 STARTING_RANGE = 0.0 # V
 ENDING_RANGE = 5.0 # V
 STEPS_SIZE = 0.1 # V
+TIME_PER_STEP = 0.1 # s
 
-SAMPLES_PER_CH = 100
+SAMPLES_PER_CH = 100 # READ_ALL_AVAILABLE
 TIME_BEFORE_START_ACQUIS = 0.0 # s
 
 taskMaster = mx.Task('Master')
+
 taskMaster.ao_channels.add_ao_voltage_chan('Dev1/ao0')
 
 taskSlave = mx.Task('Slave')
+
+taskSlave.timing.cfg_samp_clk_timing(rate=SAMPLES_PER_CH/TIME_PER_STEP, samps_per_chan=100)
+print(taskSlave.timing.samp_quant_samp_mode)
+
 taskSlave.ai_channels.add_ai_voltage_chan('Dev1/ai0:3')
 
 # measure time
@@ -37,8 +46,6 @@ def acquire(
     # if not debugging:
         
     outputArr = np.arange(*outRange, stepSize)
-
-
 
     for val in outputArr:
         timeBeforeTask.append(time.time_ns() / 10 ** 9)
