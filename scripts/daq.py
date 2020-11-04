@@ -8,12 +8,14 @@ import pandas as pd
 import matplotlib.pyplot as pl
 import numpy as np
 import time
+from tqdm import tqdm
 
 
 class Controler():
     _daqdata = {}
     _clock = {}
     _data = {}
+    _nChannels = 4
     _RANGE_START = 0.0 # V
     _RANGE_END = 1.0 # V
     _STEP_SIZE = 0.1 # V
@@ -31,7 +33,8 @@ class Controler():
     def __init__(self):
         """Initialize data and clock variables
         """
-        self._daqdata = pd.DataFrame({0: [], 1:[], 2: [], 3: []})
+
+        self._daqdata = pd.DataFrame({key: [] for key in range(self._nChannels)})
         self._clock = {'time': []}
         
     def _xpconfig(self):
@@ -62,7 +65,7 @@ class Controler():
             - Runs the routines and stores internaly the data
         """        
         # reset data
-        self._daqdata = pd.DataFrame({0: [], 1:[], 2: [], 3: []})
+        self._daqdata = pd.DataFrame({key: [] for key in range(self._nChannels)})
         self._clock = {'time': []}
         self._xpconfig()
 
@@ -96,7 +99,7 @@ class Controler():
 
         # There's a faster way to do this ramping using a callback function
         # Switching tasks on and off consumes time (~ 0.02 s)
-        for val in outputArr:
+        for val in tqdm(outputArr, desc='Ramping.. '):
 
             # acquire time
             self._clock['time'].append(time.time_ns() / 10 ** 9)
@@ -150,24 +153,24 @@ class Controler():
         """
         docstring
         """
-        # plot results
-        # pl.ion()
-        mrkr = ['o', 'v', 's', '>']
-        for i in range(4):
-            pl.plot(self._data.index, self._data[i], label=f'Channel: {i}',
-                marker=mrkr[i], alpha=.5, linestyle='')
+        if self._data:
+            pl.rcParams.update({'font.size': 18})
+            # 1 subplot per channel
+            fig01, axs = pl.subplots(self._nChannels, sharex=True, figsize=(7,8))
 
-        """ 
-        pl.plot(data.iloc[::SAMPLES_PER_CH].index, np.asarray(timeBeforeTask) - timeBeforeTask[0], label='Time B4 task', marker='<')
-        pl.plot(data.iloc[::SAMPLES_PER_CH].index, np.asarray(timeAfterTask) - timeBeforeTask[0], label='Time after task', marker='>')
-        pl.legend()
-        pl.xlabel('Acquisition #')
-        pl.ylabel('Time (s)')
-        """
+            pl.ion()
 
-        pl.rcParams.update({'font.size': 18})
-        pl.legend()
-        pl.xlabel('Acquisition #')
-        pl.ylabel('Output (V)')
-        pl.show()
+            for n in range(self._nChannels):
+                axs[n].plot(self._data['time'], self._data[n], label=f'Channel: {i}',
+                    marker='o', alpha=.5, linestyle='')
+                axs[n].legend()
+                axs[n].set_ylabel('Output (V)')
+                axs[n].set_xlabel('Time (s)')
+                axs[n].grid()
+
+            fig01.tight_layout()
+            fig01.show()
+            print('Data plotted...')
+        else:
+            print('No data to plot...')
 
