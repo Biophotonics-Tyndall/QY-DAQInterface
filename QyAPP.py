@@ -5,15 +5,15 @@ import subprocess, os, platform
 
 Daq = Controler()
 
-def run_event(message):
-    print(message)
-    Daq.run()
-    input('Press ENTER to continue...')
+# def run_event(message):
+#     print(message)
+#     Daq.run()
+#     input('\nPress ENTER to continue...')
 
-def plot_event(message):
-    print(message)
-    Daq.plot()
-    input('Press ENTER to continue...')
+# def plot_event(message):
+#     print(message)
+#     Daq.plot()
+#     input('\nPress ENTER to continue...')
 
 def row(s):
     return('  ' + '\u2502' + s.ljust(width - 4) + '\u2502')
@@ -26,7 +26,7 @@ while running:
     menu = '\n'.join([
         upHline,
         row(" "),
-        row("       🔬 QY - System"), 
+        row("       ⏱  QY - System"), 
         row("       v.0.0.1"),
         row(" "),
         row(" "),
@@ -45,12 +45,19 @@ while running:
     os.system('cls' if os.name == 'nt' else 'clear')
     if action == '5':
         running = False
+        print('Closing...\n')
+
     elif action == '4':
-        plot_event('Ploting...')
+        print('Plotting...\n')
+        Daq.plot()
+
     elif action == '3':
-        input('saving...')
+        print('Saving...\n')
+
     elif action == '2':
-        run_event('Running...')
+        print('Running...\n')
+        Daq.run()
+
     elif action == '1':
         print('Change the file, save and close it.')
         if platform.system() == 'Darwin':       # macOS
@@ -60,7 +67,8 @@ while running:
         else:                                   # linux variants
             subprocess.call(('xdg-open', 'measurement_config.txt'))
 
-        input('Press ENTER to continue...')
     else:
         print('Invalid option...')
+
+    input('\nPress ENTER to continue...')
 
