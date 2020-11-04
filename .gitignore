@@ -5,6 +5,9 @@
 data/
 archive/
 
+# Byte-compiled / optimized / DLL files
+__pycache__/
+
 # ignore .bat file
 *.bat
 
