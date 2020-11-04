@@ -17,7 +17,7 @@ def plot_event(message):
 
 def row(s):
     return('  ' + '\u2502' + s.ljust(width - 4) + '\u2502')
-width = 80
+width = 70
 upHline = '  ' + '\u250C' + '\u2500' * (width - 4) + '\u2510'
 downHline = '  ' + '\u2514' + '\u2500' * (width - 4) + '\u2518'
 
