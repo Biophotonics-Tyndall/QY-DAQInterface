@@ -129,6 +129,9 @@ class Controler():
             self._clock,
             index=self._daqdata.iloc[::self._INTERNAL_SAMPLES_PER_CH].index
         )
+
+        # set initial to zero
+        self._clock['time'] -= self._clock['time'][0]
         
         # concat clock and daqdata
         self._data = pd.concat([self._clock, self._daqdata], axis=1)
