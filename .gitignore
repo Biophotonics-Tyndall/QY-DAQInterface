@@ -6,7 +6,7 @@ archive/
 __pycache__/
 
 # ignore .bat file
-# *.bat
+add-path.bat
 
 # Ignore png files
 *.png
