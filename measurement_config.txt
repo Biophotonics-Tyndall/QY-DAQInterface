@@ -1,0 +1,37 @@
+#################################################
+# Measurement config file
+# QY - app controller | v.0.0.1
+#################################################
+[Laser]
+# Output channel range (in volts)
+
+start = 0.0
+end = 5.0
+step size = 0.1
+#################################################
+[Timing]
+# Timing settings (in seconds)
+
+time per step = 0.1
+#################################################
+[Sampling]
+# Sampling rate is internally calculated as
+    # number of samples per channel per step over time per step
+# Maximum sampling rate performed by DAQ 6212 is 400 KS/s
+
+samples per channel per step = 100
+#################################################
+[Channels]
+# Daq ports:
+    # L: refers to laser driver
+    # A0 R.C: Analog Output Row R Column C
+    # AI R.C: Analog Input Row R Column C
+    # PM: Power meter
+    # APD: APD
+
+AO 0.0 = L T AI 0.0
+AI 0.0 = A0 0.0
+AI 0.1 = PM
+AI 0.2 = APD
+
+#################################################

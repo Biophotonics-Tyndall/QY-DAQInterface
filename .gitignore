@@ -3,6 +3,7 @@
 
 # Ignore folders
 data/
+archive/
 
 # ignore .bat file
 *.bat
