@@ -153,7 +153,7 @@ class Controler():
         """
         docstring
         """
-        if self._data:
+        if not self._data.empty:
             pl.rcParams.update({'font.size': 18})
             # 1 subplot per channel
             fig01, axs = pl.subplots(self._nChannels, sharex=True, figsize=(7,8))
@@ -161,7 +161,7 @@ class Controler():
             pl.ion()
 
             for n in range(self._nChannels):
-                axs[n].plot(self._data['time'], self._data[n], label=f'Channel: {i}',
+                axs[n].plot(self._data['time'], self._data[n], label=f'Channel: {n}',
                     marker='o', alpha=.5, linestyle='')
                 axs[n].legend()
                 axs[n].set_ylabel('Output (V)')
