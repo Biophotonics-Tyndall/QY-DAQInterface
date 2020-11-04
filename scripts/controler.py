@@ -35,6 +35,8 @@ taskMaster = mx.Task('Master')
 taskMaster.ao_channels.add_ao_voltage_chan('Dev1/ao0')
 
 taskSlave = mx.Task('Slave')
+# Add channels to slave
+taskSlave.ai_channels.add_ai_voltage_chan('Dev1/ai0:3')
 
 # Configure the DAQ internal clock
 # samps_per_chan (Optional[long]): Specifies the number of  
@@ -50,8 +52,6 @@ taskSlave.timing.cfg_samp_clk_timing(
 
 # print(taskSlave.timing.samp_quant_samp_mode)
 
-# Add channels to slave
-taskSlave.ai_channels.add_ai_voltage_chan('Dev1/ai0:3')
 
 
 # Measurement

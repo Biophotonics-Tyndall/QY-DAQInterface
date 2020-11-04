@@ -42,15 +42,16 @@ class Controler():
         config.read("measurement_config.txt")
         
         # Set power range
-        self._RANGE_START = config['Laser']['start']
-        self._RANGE_END = config['Laser']['end']
-        self._STEP_SIZE = config['Laser']['step size']
+        self._RANGE_START = float(config['Laser']['start'])
+        self._RANGE_END = float(config['Laser']['end'])
+        self._STEP_SIZE = float(config['Laser']['step size'])
         
         # Set timing
-        self._TIME_PER_STEP = config['Timing']['time per step']
+        self._TIME_PER_STEP = float(config['Timing']['time per step'])
         
         # Set sampling
-        self._INTERNAL_SAMPLES_PER_CH = config['Sampling']['samples per channel per step']
+        self._INTERNAL_SAMPLES_PER_CH = int(config['Sampling']['samples per channel per step'])
+        self._SAMPLING_RATE = self._INTERNAL_SAMPLES_PER_CH / self._TIME_PER_STEP
 
     def run(self):
         """
