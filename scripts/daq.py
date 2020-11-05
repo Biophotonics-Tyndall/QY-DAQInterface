@@ -12,10 +12,11 @@ from tqdm import tqdm
 
 
 class Controler():
-    _daqdata = {}
+    _daqdata = pd.DataFrame()
     _clock = {}
-    _data = {}
+    _data = pd.DataFrame()
     _nChannels = 4
+    _config = {}
     _RANGE_START = 0.0 # V
     _RANGE_END = 1.0 # V
     _STEP_SIZE = 0.1 # V
@@ -36,25 +37,26 @@ class Controler():
 
         self._daqdata = pd.DataFrame({key: [] for key in range(self._nChannels)})
         self._clock = {'time': []}
+        self._xpconfig()
         
     def _xpconfig(self):
         """
         _get_xpconfig()
         Gets and sets experiment parameters from external .ini file.
         """
-        config = configparser.ConfigParser()
-        config.read("measurement_config.txt")
+        self._config = configparser.ConfigParser()
+        self._config.read("measurement_config.txt")
         
         # Set power range
-        self._RANGE_START = float(config['Laser']['start'])
-        self._RANGE_END = float(config['Laser']['end'])
-        self._STEP_SIZE = float(config['Laser']['step size'])
+        self._RANGE_START = float(self._config['Laser']['start'])
+        self._RANGE_END = float(self._config['Laser']['end'])
+        self._STEP_SIZE = float(self._config['Laser']['step size'])
         
         # Set timing
-        self._TIME_PER_STEP = float(config['Timing']['time per step'])
+        self._TIME_PER_STEP = float(self._config['Timing']['time per step'])
         
         # Set sampling
-        self._INTERNAL_SAMPLES_PER_CH = int(config['Sampling']['samples per channel per step'])
+        self._INTERNAL_SAMPLES_PER_CH = int(self._config['Sampling']['samples per channel per step'])
         self._SAMPLING_RATE = self._INTERNAL_SAMPLES_PER_CH / self._TIME_PER_STEP
 
     def run(self):
@@ -157,19 +159,28 @@ class Controler():
         docstring
         """
         if not self._data.empty:
-            pl.rcParams.update({'font.size': 18})
+            gConfig = config['Graph Settings']
+            pl.rcParams.update({'font.size': float(gConfig['font size'])})
             # 1 subplot per channel
             fig01, axs = pl.subplots(self._nChannels, sharex=True, figsize=(7,8))
 
             pl.ion()
 
             for n in range(self._nChannels):
-                axs[n].plot(self._data['time'], self._data[n], label=f'Channel: {n}',
-                    marker='o', alpha=.5, linestyle='')
-                axs[n].legend()
-                axs[n].set_ylabel('Output (V)')
+                axs[n].plot(self._data['time'], self._data[n], label=gConfig['label'],
+                    marker=gConfig['marker'],
+                    ms=float(gConfig['marker size']),
+                    color=gConfig['colour'],
+                    alpha=float(gConfig['alpha']),
+                    linestyle=gConfig['line style'],
+                    lw=float(gConfig['line width'])
+                )
+                axs[n].legend(title=f'Channel {n}')
+                axs[n].set_ylabel('Input (V)')
                 axs[n].set_xlabel('Time (s)')
-                axs[n].grid()
+                axs[n].grid(gConfig['grid'])
+
+            axs[0].title(gConfig['title'])
 
             fig01.tight_layout()
             fig01.show()

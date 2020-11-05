@@ -5,15 +5,21 @@ import subprocess, os, platform
 
 Daq = Controler()
 
-# def run_event(message):
-#     print(message)
-#     Daq.run()
-#     input('\nPress ENTER to continue...')
-
-# def plot_event(message):
-#     print(message)
-#     Daq.plot()
-#     input('\nPress ENTER to continue...')
+# menu = '\n'.join([
+#         upHline,
+#         row(" "),
+#         row("       QY - System"), 
+#         row("       \xa9 QyAPP v.0.0.1"),
+#         row(" "),
+#         row(" "),
+#         row("    1. \u2699 Settings"), 
+#         row("    2. \u25b6 Run"),
+#         row("    3. \U0001f4be\u0000 Save"), 
+#         row("    4. \U0001f4c8\u0000 Plot data"), 
+#         row("    5. \u274c\u0000 Exit"), 
+#         row(" "),
+#         downHline,
+#     ])
 
 def row(s):
     return('  ' + '\u2502' + s.ljust(width - 4) + '\u2502')
@@ -26,12 +32,12 @@ while running:
     menu = '\n'.join([
         upHline,
         row(" "),
-        row("       ⏱  QY - System"), 
-        row("       v.0.0.1"),
+        row("       QY - System"), 
+        row("       \xa9 QyAPP v.0.0.1"),
         row(" "),
         row(" "),
         row("    1. Settings"), 
-        row("    2. Run"), 
+        row("    2. Run"),
         row("    3. Save"), 
         row("    4. Plot data"), 
         row("    5. Exit"), 

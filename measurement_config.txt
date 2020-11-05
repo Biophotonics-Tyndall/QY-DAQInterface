@@ -35,3 +35,30 @@ AI 0.1 = PM
 AI 0.2 = APD
 
 #################################################
+[Extra Parameters]
+# Include more if needed. These values will be recorded 
+# on the xplog.csv file
+
+sample = s000
+APD gain = min
+density filter = ND1
+
+#################################################
+[Graph Settings]
+# Change matplotlib graph preferences
+
+# Color names: https://htmlcolorcodes.com/color-names/
+
+graph size = 7,8
+font size = 18
+title = UCNPS dynamics
+label = run 01
+colour = orangered
+alpha = 0.5
+marker = o
+marker size = 2
+line style = -
+line width = 1
+grid = on
+
+#################################################
