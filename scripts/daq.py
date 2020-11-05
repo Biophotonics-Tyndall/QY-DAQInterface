@@ -41,7 +41,7 @@ class Controler():
         """Initialize data and clock variables
         """
         self._xpconfig()
-        self._nChannels = len(self._IN_CHANNELS)
+        
         self._daqdata = pd.DataFrame({key: [] for key in range(self._nChannels)})
         self._clock = {'time': []}
         
@@ -57,6 +57,7 @@ class Controler():
         # Set channels
         self._OUT_CHANNEL = [ch for ch in list(self._config['Channels']) if ch[1]=='o']
         self._IN_CHANNELS = sorted([ch for ch in list(self._config['Channels']) if ch[1]=='i'])
+        self._nChannels = len(self._IN_CHANNELS)
 
         # Set power range
         self._RANGE_START = float(self._config['Laser']['start'])
@@ -78,10 +79,10 @@ class Controler():
             - Runs the routines and stores internaly the data
         """        
         # reset data
+        self._xpconfig()
         self._daqdata = pd.DataFrame({key: [] for key in range(self._nChannels)})
         self._clock = {'time': []}
-        self._xpconfig()
-
+        
 
         # Start tasks and add channels
         # Master modulates the laser

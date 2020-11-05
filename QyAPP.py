@@ -67,11 +67,11 @@ while running:
     elif action == '1':
         print('Change the file, save and close it.')
         if platform.system() == 'Darwin':       # macOS
-            subprocess.call(('open', 'measurement_config.txt'))
+            subprocess.call(('open', 'config.txt'))
         elif platform.system() == 'Windows':    # Windows
-            os.startfile('measurement_config.txt')
+            os.startfile('config.txt')
         else:                                   # linux variants
-            subprocess.call(('xdg-open', 'measurement_config.txt'))
+            subprocess.call(('xdg-open', 'config.txt'))
 
     else:
         print('Invalid option...')

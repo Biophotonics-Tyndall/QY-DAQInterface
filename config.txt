@@ -8,11 +8,13 @@
 start = 0.0
 end = 1.0
 step size = 0.1
+
 #################################################
 [Timing]
 # Timing settings (in seconds)
 
 time per step = 0.1
+
 #################################################
 [Sampling]
 # Sampling rate is internally calculated as
@@ -20,6 +22,7 @@ time per step = 0.1
 # Maximum sampling rate performed by DAQ 6212 is 400 KS/s
 
 samples per channel per step = 100
+
 #################################################
 [Channels]
 # Daq ports:
@@ -29,11 +32,10 @@ samples per channel per step = 100
     # PM: Power meter
     # APD: APD
 
-AO0 = L T AI0
+AO1 = AO2
 AI0 = AO0
 AI1 = PM
 AI2 = APD
-AI3 = -
 
 #################################################
 [Extra Parameters]
