@@ -27,8 +27,8 @@ samples per channel per step = 100
 [Channels]
 # Daq ports:
     # L: refers to laser driver
-    # A0 R.C: Analog Output Row R Column C
-    # AI R.C: Analog Input Row R Column C
+    # AOx: Analog Output x
+    # AIx: Analog Input x
     # PM: Power meter
     # APD: APD
 
@@ -45,6 +45,7 @@ AI2 = APD
 sample = s000
 APD gain = min
 density filter = ND1
+comments = 
 
 #################################################
 [Graph Settings]

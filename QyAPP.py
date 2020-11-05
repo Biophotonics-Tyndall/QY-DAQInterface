@@ -52,6 +52,7 @@ while running:
     if action == '5':
         running = False
         print('Closing...\n')
+        Daq.savelog()
 
     elif action == '4':
         print('Plotting...\n')
@@ -59,6 +60,7 @@ while running:
 
     elif action == '3':
         print('Saving...\n')
+        Daq.save()
 
     elif action == '2':
         print('Running...\n')
