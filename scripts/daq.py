@@ -15,8 +15,14 @@ class Controler():
     _daqdata = pd.DataFrame()
     _clock = {}
     _data = pd.DataFrame()
-    _nChannels = 4
+    _nChannels = 3
     _config = {}
+
+    # Channels
+    _OUT_CHANNEL = ['ao0']
+    _IN_CHANNELS = ['ai0', 'ai1', 'ai2']
+
+    # Ramping
     _RANGE_START = 0.0 # V
     _RANGE_END = 1.0 # V
     _STEP_SIZE = 0.1 # V
@@ -34,19 +40,24 @@ class Controler():
     def __init__(self):
         """Initialize data and clock variables
         """
-
+        self._xpconfig()
+        self._nChannels = len(self._IN_CHANNELS)
         self._daqdata = pd.DataFrame({key: [] for key in range(self._nChannels)})
         self._clock = {'time': []}
-        self._xpconfig()
         
+
     def _xpconfig(self):
         """
         _get_xpconfig()
         Gets and sets experiment parameters from external .ini file.
         """
         self._config = configparser.ConfigParser()
-        self._config.read("measurement_config.txt")
+        self._config.read("config.txt")
         
+        # Set channels
+        self._OUT_CHANNEL = [ch for ch in list(self._config['Channels']) if ch[1]=='o']
+        self._IN_CHANNELS = sorted([ch for ch in list(self._config['Channels']) if ch[1]=='i'])
+
         # Set power range
         self._RANGE_START = float(self._config['Laser']['start'])
         self._RANGE_END = float(self._config['Laser']['end'])
@@ -75,12 +86,12 @@ class Controler():
         # Start tasks and add channels
         # Master modulates the laser
         taskMaster = mx.Task('Master')
-        taskMaster.ao_channels.add_ao_voltage_chan('Dev1/ao0')
+        taskMaster.ao_channels.add_ao_voltage_chan(f'Dev1/{self._OUT_CHANNEL[0]}')
 
         # Slave perform readings
         taskSlave = mx.Task('Slave')
         # Add channels to slave
-        taskSlave.ai_channels.add_ai_voltage_chan('Dev1/ai0:3')
+        taskSlave.ai_channels.add_ai_voltage_chan(f'Dev1/ai{self._IN_CHANNELS[0][-1]}:{self._IN_CHANNELS[-1][-1]}')
         
         # Configure the DAQ internal clock
         # samps_per_chan (Optional[long]): Specifies the number of  
@@ -159,10 +170,13 @@ class Controler():
         docstring
         """
         if not self._data.empty:
-            gConfig = config['Graph Settings']
+            cConfig = self._config['Channels']
+            gConfig = self._config['Graph Settings']
             pl.rcParams.update({'font.size': float(gConfig['font size'])})
             # 1 subplot per channel
-            fig01, axs = pl.subplots(self._nChannels, sharex=True, figsize=(7,8))
+            fig01, axs = pl.subplots(self._nChannels, sharex=True,
+                figsize=[float(i) for i in gConfig['graph size'].split(',')]
+            )
 
             pl.ion()
 
@@ -175,12 +189,12 @@ class Controler():
                     linestyle=gConfig['line style'],
                     lw=float(gConfig['line width'])
                 )
-                axs[n].legend(title=f'Channel {n}')
+                axs[n].legend(title=f"Ch.{n}: {cConfig[self._IN_CHANNELS[n]]}")
                 axs[n].set_ylabel('Input (V)')
-                axs[n].set_xlabel('Time (s)')
                 axs[n].grid(gConfig['grid'])
 
-            axs[0].title(gConfig['title'])
+            axs[-1].set_xlabel('Time (s)')
+            axs[0].set_title(gConfig['title'])
 
             fig01.tight_layout()
             fig01.show()

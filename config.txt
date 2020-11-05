@@ -29,10 +29,11 @@ samples per channel per step = 100
     # PM: Power meter
     # APD: APD
 
-AO 0.0 = L T AI 0.0
-AI 0.0 = A0 0.0
-AI 0.1 = PM
-AI 0.2 = APD
+AO0 = L T AI0
+AI0 = AO0
+AI1 = PM
+AI2 = APD
+AI3 = -
 
 #################################################
 [Extra Parameters]
@@ -54,7 +55,7 @@ font size = 18
 title = UCNPS dynamics
 label = run 01
 colour = orangered
-alpha = 0.5
+alpha = 0.7
 marker = o
 marker size = 2
 line style = -
