@@ -88,7 +88,152 @@ class Controler():
             self._config['Sampling']['samples per channel per step'])
         self._SAMPLING_RATE = self._INTERNAL_SAMPLES_PER_CH / self._TIME_PER_STEP
 
+
+
+
+
     def run(self):
+        """
+        """
+
+        # reset data
+        self._xpconfig()
+        self._daqdata = pd.DataFrame({key: []
+                                      for key in range(self._nChannels)})
+        self._clock = {'time': []}
+
+        taskMaster = mx.Task('Master')
+        taskMaster.ao_channels.add_ao_voltage_chan(
+            f'Dev1/{self._OUT_CHANNEL[0]}')
+
+        # Slave perform readings
+        taskSlave = mx.Task('Slave')
+        # Add channels to slave
+        taskSlave.ai_channels.add_ai_voltage_chan(
+            f'Dev1/ai{self._IN_CHANNELS[0][-1]}:{self._IN_CHANNELS[-1][-1]}')
+
+        # Configure the DAQ internal clock
+        # samps_per_chan (Optional[long]): Specifies the number of
+        #         samples to acquire or generate for each channel in the
+        #         task if **sample_mode** is **FINITE_SAMPLES**. If
+        #         **sample_mode** is **CONTINUOUS_SAMPLES**, NI-DAQmx uses
+        #         this value to determine the buffer size.
+        # access the sample_mode by:
+        # print(taskSlave.timing.samp_quant_samp_mode)
+        taskSlave.timing.cfg_samp_clk_timing(
+            rate=self._SAMPLING_RATE,
+            sample_mode=AcquisitionType.CONTINUOUS,
+            samps_per_chan=self._INTERNAL_SAMPLES_PER_CH # buffer size
+        )
+
+        def callback(task_handle, every_n_samples_event_type,
+                    number_of_samples, callback_data):
+
+            # samples = task.read(number_of_samples_per_channel=200)
+            # t = time.time_ns()
+            self._clock['time'].append(time.time_ns() / 10 ** 9)
+            self._daqdata = pd.concat([
+                self._daqdata,
+                pd.DataFrame(
+                    taskSlave.read(
+                        number_of_samples_per_channel=number_of_samples)
+                ).T
+            ])
+            pbar.update(1)
+            # write next value to output if it is within the range
+            if self._outputArr:
+                taskMaster.write([self._outputArr[0]])
+                self._outputArr = np.delete(self._outputArr, 0)
+            else:
+                taskSlave.stop()
+                pbar.close()
+
+            # dt = (t - t0) / 10 ** 6 # conver ns to ms
+            # print(f'{number_of_samples} samples in {dt:.3f}', end='\r')
+            return 0
+
+        self._outputArr = np.arange(self._RANGE_START, self._RANGE_END, self._STEP_SIZE)
+
+
+        taskSlave.register_every_n_samples_acquired_into_buffer_event(
+            200, callback)
+
+        # define progress bar
+        pbar = tqdm(total=len(self._outputArr), desc='Acquiring', unit='steps')
+        
+        taskMaster.write([self._outputArr[0]])
+        self._outputArr = np.delete(self._outputArr, 0)
+        t0 = time.time_ns() # acquire initial t in ns
+        taskSlave.start()
+
+        os.system('cls' if os.name == 'nt' else 'clear')
+        input('Task running... Press ENTER to stop.')
+
+        taskSlave.stop()
+        taskSlave.close()
+        taskMaster.write([0.0])
+        taskMaster.stop()
+        taskMaster.close()
+
+        self._daqdata.reset_index(drop=True, inplace=True)
+        # arrange time to DataFrame
+        # change this if self._SAMPLES_PER_CH_TO_READ is set to somthing different than READ_ALL_AVAILABLE
+        self._clock = pd.DataFrame(
+            self._clock,
+            index=self._daqdata.iloc[self._INTERNAL_SAMPLES_PER_CH-1::self._INTERNAL_SAMPLES_PER_CH].index
+        )
+
+        # set initial to zero
+        self._clock['time'].loc[0, 'time'] = t0
+        self._clock['time'] -= self._clock['time'][0]
+
+        # concat clock and daqdata
+        self._data = pd.concat([self._clock, self._daqdata], axis=1)
+
+        # linear inerpolation // it doesn't consider the 0.02 s between the tasks.
+        self._data['time'].interpolate(inplace=True)
+        print('Done!')
+
+        # pbar = tqdm(total=5, desc='Task running... Press ENTER to stop.')
+        # with nidaqmx.Task() as task:
+        #     task.ai_channels.add_ai_voltage_chan("Dev1/ai0")
+
+        #     # task.timing.cfg_samp_clk_timing(1000)
+
+        #     # Python 2.X does not have nonlocal keyword.
+        #     non_local_var = {'samples': []}
+
+        #     def callback(task_handle, every_n_samples_event_type,
+        #                 number_of_samples, callback_data):
+        #         t = time.time_ns()
+        #         samples = task.read(number_of_samples_per_channel=200)
+        #         non_local_var['samples'].extend(samples)
+        #         # non_local_var['time'].append(time.time_ns())
+        #         pbar.update(1)
+                
+        #         dt = (t - t0) / 10 ** 6 # conver ns to ms
+        #         print(f'{number_of_samples} samples in {dt:.3f}', end='\r')
+
+        #         # dt = non_local_var['time'][0] if len(non_local_var['time']) < 2 else non_local_var['time'][-1] - non_local_var['time'][-2]
+        #         # print(f'Every N Samples callback invoked. {dt:.10f}')
+        #         return 0
+
+        #     task.register_every_n_samples_acquired_into_buffer_event(
+        #         200, callback)
+        #     t0 = time.time_ns()
+        #     task.start()
+
+        #     input('Running task. Press Enter to stop and see number of '
+        #         'accumulated samples.\n')
+        #     pbar.close()
+        #     print(t0, len(non_local_var['samples']))
+
+
+
+
+
+
+    def run_(self):
         """
         run() is the core of the class.
             - It calls the experiment confg
@@ -128,12 +273,12 @@ class Controler():
         )
 
         # array with all steps linear arranged in a numpy array
-        outputArr = np.arange(
+        self._outputArr = np.arange(
             self._RANGE_START, self._RANGE_END, self._STEP_SIZE)
 
         # There's a faster way to do this ramping using a callback function
         # Switching tasks on and off consumes time (~ 0.02 s)
-        for val in tqdm(outputArr, desc='Ramping.. '):
+        for val in tqdm(self._outputArr, desc='Ramping.. '):
 
             # acquire time
             self._clock['time'].append(time.time_ns() / 10 ** 9)
@@ -216,29 +361,37 @@ class Controler():
         # check if file already exists and havee same structure
         logfilePath = './data/xplog.csv'
 
-        try:
-            with open(logfilePath, 'r') as logfile:
-                header = logfile.readline()
-            if all(e in self._log.columns for e in header.strip().split(',') if e):
-                # append to file
-                self._log.to_csv(logfilePath, mode='a', header=False)
-            else:
-                print(
-                    "The header of the file {logfilePath} doesn't match with the pattern.\n",
-                    "I'll rename it and save log to new file."
-                )
-                renamed = f"./data/xplog_renamed_{datetime.now().strftime('%Y%m%d_%H%M%S')}.csv"
-                os.rename(logfilePath, renamed)
-                # save
+        if not self._log.empty:
+            try:
+                with open(logfilePath, 'r') as logfile:
+                    header = logfile.readline()
+                if all(e in self._log.columns for e in header.strip().split(',') if e):
+                    # append to file
+                    self._log.to_csv(logfilePath, mode='a', header=False)
+                else:
+                    print(
+                        "The header of the file {logfilePath} doesn't match with the pattern.\n",
+                        "I'll rename it and save log to new file."
+                    )
+                    renamed = f"./data/xplog_renamed_{datetime.now().strftime('%Y%m%d_%H%M%S')}.csv"
+                    os.rename(logfilePath, renamed)
+                    # save
+                    self._log.to_csv(logfilePath)
+
+            except FileNotFoundError:
+                print(f'Unable to find file:{logfilePath}\n',
+                    "Relax, I'll try create it for you!"
+                    )
                 self._log.to_csv(logfilePath)
 
-        except FileNotFoundError:
-            print(f'Unable to find file:{logfilePath}\n',
-                  "Relax, I'll try create it for you!"
-                  )
-            self._log.to_csv(logfilePath)
+            print(f'Log file {logfilePath} saved...')
 
-        print(f'Log file {logfilePath} saved...')
+        # reset log
+        self._log = pd.DataFrame(columns=[
+            'exp_id', 'saved_name', 'out_ch', 'range_start', 'range_end', 'range_step_size',
+            'in_chs', 'time_per_step', 'samples_per_ch', 'sampling_rate', 'samples_per_ch_to_read',
+            'extra_params', 'user', 'app_version'
+        ])
 
     def save(self):
         """

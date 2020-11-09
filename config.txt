@@ -5,9 +5,14 @@
 [Laser]
 # Output channel range (in volts)
 
+# output channel
 start = 0.0
 end = 1.0
 step size = 0.1
+
+# input channels
+min voltage = 0.0
+max voltage = 10.0
 
 #################################################
 [Timing]
@@ -22,6 +27,7 @@ time per step = 0.1
 # Maximum sampling rate performed by DAQ 6212 is 400 KS/s
 
 samples per channel per step = 100
+reading mode = contiuous
 
 #################################################
 [Channels]

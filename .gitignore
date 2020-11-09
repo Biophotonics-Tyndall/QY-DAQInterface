@@ -1,5 +1,5 @@
 # Ignore folders
-# data/
+data/raw-data/
 archive/
 
 # Byte-compiled / optimized / DLL files
@@ -8,8 +8,13 @@ __pycache__/
 # ignore .bat file
 add-path.bat
 
+# ignore xplog file
+data/xplog.csv
+
 # Ignore png files
 *.png
+*.jpeg
+*.jpg
 
 # Ignore pdf files
 *.pdf
