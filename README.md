@@ -23,10 +23,10 @@ Run: `pip install -r ./setup/requirements.txt`
 + [scripts/](./scripts/): Python scripts to control the DAQ, create plots, manage the data, etc.
 
  
- ## User manual
- **_Under developement_**
+## User manual
+**_Under developement_**
 
- ## Output example:
+## Output example:
 
 ![First test](./output/control_test_1.png)
 

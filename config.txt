@@ -1,7 +1,7 @@
-#################################################
+##################################################################
 # Measurement config file
 # QY - app controller | v.0.0.1
-#################################################
+##################################################################
 [Laser]
 # Output channel range (in volts)
 
@@ -10,26 +10,26 @@ start = 0.0
 end = 1.0
 step size = 0.1
 
-# input channels
-min voltage = 0.0
-max voltage = 10.0
-
-#################################################
+##################################################################
 [Timing]
 # Timing settings (in seconds)
 
 time per step = 0.1
 
-#################################################
+##################################################################
 [Sampling]
 # Sampling rate is internally calculated as
     # number of samples per channel per step over time per step
-# Maximum sampling rate performed by DAQ 6212 is 400 KS/s
+    # Maximum sampling rate performed by DAQ 6212 is 400 KS/s
+    # Acquisition type is set to continuous
+
+# input channels reading range (float from -10. to 10. volts)
+min voltage = 0.0
+max voltage = 10.0
 
 samples per channel per step = 100
-reading mode = contiuous
 
-#################################################
+##################################################################
 [Channels]
 # Daq ports:
     # L: refers to laser driver
@@ -43,7 +43,7 @@ AI0 = AO0
 AI1 = PM
 AI2 = APD
 
-#################################################
+##################################################################
 [Extra Parameters]
 # Include more if needed. These values will be recorded 
 # on the xplog.csv file
@@ -53,10 +53,9 @@ APD gain = min
 density filter = ND1
 comments = 
 
-#################################################
+##################################################################
 [Graph Settings]
 # Change matplotlib graph preferences
-
 # Color names: https://htmlcolorcodes.com/color-names/
 
 graph size = 7,8
@@ -71,4 +70,4 @@ line style = -
 line width = 1
 grid = on
 
-#################################################
+##################################################################

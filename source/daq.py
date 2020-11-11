@@ -16,6 +16,8 @@ import json
 
 
 class Controler():
+    """
+    """
     _daqdata = pd.DataFrame()
     _clock = {}
     _data = pd.DataFrame()
@@ -39,8 +41,13 @@ class Controler():
     # I guess this should be lesser than _INTERNAL_SAMP_PER_CH,
     # otherwise the driver will try to read more samples than available
     # in the buffer
+    # Reading Parameters
     _SAMPLES_PER_CH_TO_READ = READ_ALL_AVAILABLE
     _SAMPLING_RATE = _INTERNAL_SAMPLES_PER_CH / _TIME_PER_STEP
+    _MIN_READING_VAL = -5.0
+    _MAX_READING_VAL = 5.0
+
+
 
     def __init__(self):
         """Initialize data and clock variables
@@ -56,7 +63,8 @@ class Controler():
 
         self._log = pd.DataFrame(columns=[
             'exp_id', 'saved_name', 'out_ch', 'range_start', 'range_end', 'range_step_size',
-            'in_chs', 'time_per_step', 'samples_per_ch', 'sampling_rate', 'samples_per_ch_to_read',
+            'in_chs', 'time_per_step', 'samples_per_ch', 'sampling_rate',
+            'min_reading_val', 'max_reading_val', 'samples_per_ch_to_read',
             'extra_params', 'user', 'app_version'
         ])
 
@@ -87,17 +95,26 @@ class Controler():
         self._INTERNAL_SAMPLES_PER_CH = int(
             self._config['Sampling']['samples per channel per step'])
         self._SAMPLING_RATE = self._INTERNAL_SAMPLES_PER_CH / self._TIME_PER_STEP
+        self._MIN_READING_VAL = self._config['Sampling']['min voltage']
+        self._MAX_READING_VAL = self._config['Sampling']['max voltage']
 
-
-
-
+        self._outputArr = np.arange(self._RANGE_START, self._RANGE_END, self._STEP_SIZE)
 
     def run(self):
-        """
+        """Run method set to collect data at every N samples. 
+        Time column gives the time when the samples were collected and 
+        is measured locally with Python from the OS clock.
+        To evaluate the time that the DAQ takes to start the task
+        run the experiment with two samples with the following settings:
+            **self._RANGE_START** 0.,
+            **self._RANGE_END** = 1.,
+            **self._STEP_SIZE** = 1.,
+            **self._INTERNAL_SAMPLES_PER_CH** = 1
         """
 
-        # reset data
+        # Get params from config file
         self._xpconfig()
+        # reset data
         self._daqdata = pd.DataFrame({key: []
                                       for key in range(self._nChannels)})
         self._clock = {'time': []}
@@ -110,7 +127,9 @@ class Controler():
         taskSlave = mx.Task('Slave')
         # Add channels to slave
         taskSlave.ai_channels.add_ai_voltage_chan(
-            f'Dev1/ai{self._IN_CHANNELS[0][-1]}:{self._IN_CHANNELS[-1][-1]}')
+            f'Dev1/ai{self._IN_CHANNELS[0][-1]}:{self._IN_CHANNELS[-1][-1]}',
+            min_val=self._MIN_READING_VAL, max_val=self._MAX_READING_VAL
+        )
 
         # Configure the DAQ internal clock
         # samps_per_chan (Optional[long]): Specifies the number of
@@ -131,7 +150,7 @@ class Controler():
 
             # samples = task.read(number_of_samples_per_channel=200)
             # t = time.time_ns()
-            self._clock['time'].append(time.time_ns() / 10 ** 9)
+            self._clock['time'].append(time.time_ns())
             self._daqdata = pd.concat([
                 self._daqdata,
                 pd.DataFrame(
@@ -139,9 +158,9 @@ class Controler():
                         number_of_samples_per_channel=number_of_samples)
                 ).T
             ])
-            pbar.update(1)
+            pbar.update(number_of_samples)
             # write next value to output if it is within the range
-            if self._outputArr:
+            if self._outputArr.any():
                 taskMaster.write([self._outputArr[0]])
                 self._outputArr = np.delete(self._outputArr, 0)
             else:
@@ -152,14 +171,17 @@ class Controler():
             # print(f'{number_of_samples} samples in {dt:.3f}', end='\r')
             return 0
 
-        self._outputArr = np.arange(self._RANGE_START, self._RANGE_END, self._STEP_SIZE)
+        # self._outputArr = np.arange(self._RANGE_START, self._RANGE_END, self._STEP_SIZE)
 
 
         taskSlave.register_every_n_samples_acquired_into_buffer_event(
-            200, callback)
+            self._INTERNAL_SAMPLES_PER_CH, callback)
 
         # define progress bar
-        pbar = tqdm(total=len(self._outputArr), desc='Acquiring', unit='steps')
+        pbar = tqdm(
+            total=len(self._outputArr) * self._INTERNAL_SAMPLES_PER_CH,
+            desc='Acquiring', unit='samples', position=1
+        )
         
         taskMaster.write([self._outputArr[0]])
         self._outputArr = np.delete(self._outputArr, 0)
@@ -171,20 +193,21 @@ class Controler():
 
         taskSlave.stop()
         taskSlave.close()
+
         taskMaster.write([0.0])
         taskMaster.stop()
         taskMaster.close()
 
         self._daqdata.reset_index(drop=True, inplace=True)
         # arrange time to DataFrame
-        # change this if self._SAMPLES_PER_CH_TO_READ is set to somthing different than READ_ALL_AVAILABLE
+        # change this if self._SAMPLES_PER_CH_TO_READ is set to something different than READ_ALL_AVAILABLE
         self._clock = pd.DataFrame(
             self._clock,
             index=self._daqdata.iloc[self._INTERNAL_SAMPLES_PER_CH-1::self._INTERNAL_SAMPLES_PER_CH].index
         )
 
         # set initial to zero
-        self._clock['time'].loc[0, 'time'] = t0
+        self._clock.loc[0, 'time'] = t0
         self._clock['time'] -= self._clock['time'][0]
 
         # concat clock and daqdata
@@ -192,46 +215,11 @@ class Controler():
 
         # linear inerpolation // it doesn't consider the 0.02 s between the tasks.
         self._data['time'].interpolate(inplace=True)
+
+        # include details to log
+        self.updatelog()
+
         print('Done!')
-
-        # pbar = tqdm(total=5, desc='Task running... Press ENTER to stop.')
-        # with nidaqmx.Task() as task:
-        #     task.ai_channels.add_ai_voltage_chan("Dev1/ai0")
-
-        #     # task.timing.cfg_samp_clk_timing(1000)
-
-        #     # Python 2.X does not have nonlocal keyword.
-        #     non_local_var = {'samples': []}
-
-        #     def callback(task_handle, every_n_samples_event_type,
-        #                 number_of_samples, callback_data):
-        #         t = time.time_ns()
-        #         samples = task.read(number_of_samples_per_channel=200)
-        #         non_local_var['samples'].extend(samples)
-        #         # non_local_var['time'].append(time.time_ns())
-        #         pbar.update(1)
-                
-        #         dt = (t - t0) / 10 ** 6 # conver ns to ms
-        #         print(f'{number_of_samples} samples in {dt:.3f}', end='\r')
-
-        #         # dt = non_local_var['time'][0] if len(non_local_var['time']) < 2 else non_local_var['time'][-1] - non_local_var['time'][-2]
-        #         # print(f'Every N Samples callback invoked. {dt:.10f}')
-        #         return 0
-
-        #     task.register_every_n_samples_acquired_into_buffer_event(
-        #         200, callback)
-        #     t0 = time.time_ns()
-        #     task.start()
-
-        #     input('Running task. Press Enter to stop and see number of '
-        #         'accumulated samples.\n')
-        #     pbar.close()
-        #     print(t0, len(non_local_var['samples']))
-
-
-
-
-
 
     def run_(self):
         """
@@ -344,8 +332,10 @@ class Controler():
         log['time_per_step'] = self._TIME_PER_STEP
         log['samples_per_ch'] = self._INTERNAL_SAMPLES_PER_CH
         log['sampling_rate'] = self._SAMPLING_RATE
-        log['samples_per_ch_to_read'] = 'READ_ALL_AVAILABLE' if self._SAMPLES_PER_CH_TO_READ == - \
-            1 else self._SAMPLES_PER_CH_TO_READ
+        log['min_reading_val'] = self._MIN_READING_VAL
+        log['max_reading_val'] = self._MAX_READING_VAL
+        log['samples_per_ch_to_read'] = 'READ_ALL_AVAILABLE' \
+            if self._SAMPLES_PER_CH_TO_READ == -1 else self._SAMPLES_PER_CH_TO_READ
         log['extra_params'] = '/'.join([
             f"{k}={self._config['Extra Parameters'][k]}" for k in self._config['Extra Parameters']
         ])
@@ -412,9 +402,14 @@ class Controler():
         """
         Plots the data from channels vs time
         """
+        
         if not self._data.empty:
+            # Get configs dynamically without the need to run the experiment again
+            # in order to update the plot settings
+            dynamConfig = configparser.ConfigParser()
+            dynamConfig.read("config.txt")
+            gConfig = dynamConfig['Graph Settings']
             cConfig = self._config['Channels']
-            gConfig = self._config['Graph Settings']
             pl.rcParams.update({'font.size': float(gConfig['font size'])})
             # 1 subplot per channel
             fig01, axs = pl.subplots(self._nChannels, sharex=True,

@@ -1,4 +1,4 @@
-from scripts.daq import Controler
+from source.daq import Controler
 # import configparser
 import os
 import subprocess, os, platform
