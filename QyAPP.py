@@ -53,6 +53,8 @@ while running:
         running = False
         print('Closing...\n')
         Daq.savelog()
+        # chack if the data is saved and ask for action
+        # input('Do you ')
 
     elif action == '4':
         print('Plotting...\n')

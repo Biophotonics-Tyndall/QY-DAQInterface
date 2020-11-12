@@ -95,8 +95,8 @@ class Controler():
         self._INTERNAL_SAMPLES_PER_CH = int(
             self._config['Sampling']['samples per channel per step'])
         self._SAMPLING_RATE = self._INTERNAL_SAMPLES_PER_CH / self._TIME_PER_STEP
-        self._MIN_READING_VAL = self._config['Sampling']['min voltage']
-        self._MAX_READING_VAL = self._config['Sampling']['max voltage']
+        self._MIN_READING_VAL = float(self._config['Sampling']['min voltage'])
+        self._MAX_READING_VAL = float(self._config['Sampling']['max voltage'])
 
         self._outputArr = np.arange(self._RANGE_START, self._RANGE_END, self._STEP_SIZE)
 
@@ -180,7 +180,7 @@ class Controler():
         # define progress bar
         pbar = tqdm(
             total=len(self._outputArr) * self._INTERNAL_SAMPLES_PER_CH,
-            desc='Acquiring', unit='samples', position=1
+            desc='Acquiring', unit='samples', position=0,
         )
         
         taskMaster.write([self._outputArr[0]])
@@ -189,7 +189,7 @@ class Controler():
         taskSlave.start()
 
         os.system('cls' if os.name == 'nt' else 'clear')
-        input('Task running... Press ENTER to stop.')
+        input('Task running... Press ENTER to stop.\n')
 
         taskSlave.stop()
         taskSlave.close()
@@ -209,6 +209,7 @@ class Controler():
         # set initial to zero
         self._clock.loc[0, 'time'] = t0
         self._clock['time'] -= self._clock['time'][0]
+        self._clock['time'] /= 10**(9) # convert to seconds 
 
         # concat clock and daqdata
         self._data = pd.concat([self._clock, self._daqdata], axis=1)
@@ -355,7 +356,13 @@ class Controler():
             try:
                 with open(logfilePath, 'r') as logfile:
                     header = logfile.readline()
-                if all(e in self._log.columns for e in header.strip().split(',') if e):
+                
+                header = [e in header.strip().split(',') if e]
+                header.sort()
+                localColNames = [e for e in self._log.columns]
+                localColNames.sort()
+
+                if header == localColNames:
                     # append to file
                     self._log.to_csv(logfilePath, mode='a', header=False)
                 else:
@@ -369,12 +376,12 @@ class Controler():
                     self._log.to_csv(logfilePath)
 
             except FileNotFoundError:
-                print(f'Unable to find file:{logfilePath}\n',
+                print(f'Unable to find file:{logfilePath}...\n',
                     "Relax, I'll try create it for you!"
                     )
                 self._log.to_csv(logfilePath)
 
-            print(f'Log file {logfilePath} saved...')
+            print(f'Experiment Log file saved to: {logfilePath}')
 
         # reset log
         self._log = pd.DataFrame(columns=[
@@ -387,16 +394,19 @@ class Controler():
         """
         Save data to csv file and updates logfile
         """
-        # gets exp id from last row of log
-        expId = self._log.loc[self._log.shape[0] -
-                              1, 'exp_id'].replace('-', '_')
-        fileName = f'./data/raw-data/qy_{expId}.csv'
-        self._data.to_csv(fileName)
-        print(f'Data saved to: {fileName}')
 
-        # updates log before saving
-        self._log.loc[self._log.shape[0] - 1, 'saved_name'] = fileName
-        self.savelog()
+        if not self._data.empty:
+            # gets exp id from last row of log
+            expId = self._log.loc[self._log.shape[0] -
+                                1, 'exp_id'].replace('-', '_')
+            fileName = f'./data/raw-data/qy_{expId}.csv'
+            self._data.to_csv(fileName)
+            print(f'Data saved to: {fileName}')
+
+            # updates log before saving
+            self._log.loc[self._log.shape[0] - 1, 'saved_name'] = fileName
+            self.savelog()
+        else: print('No data to save...')
 
     def plot(self):
         """
