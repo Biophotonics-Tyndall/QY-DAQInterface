@@ -12,7 +12,6 @@ data/datalogs.csv
 *.log
 
 # Ignore png files
-!*user_panel.png
 *.png
 *.jpeg
 *.jpg
