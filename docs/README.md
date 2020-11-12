@@ -1,4 +1,9 @@
-# Internal computer clock
+# General notes
+
+Files [371931f](371931f.pdf) and [375196d](375196d.pdf) are the Daq manual and data sheet.
+Both are available online on the manufacturers website. 
+
+### Internal computer clock
 
 According to [stack overflow](https://stackoverflow.com/questions/1938048/high-precision-clock-in-python): 
 

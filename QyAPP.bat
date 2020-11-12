@@ -1,1 +1,1 @@
-python QyAPP.py
+python QyAPP_exe.py

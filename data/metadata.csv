@@ -1,0 +1,5 @@
+field_name,data_type,data_format,example,standard_units,description
+time,float,^([0-9]?\.|[1-9][\d]*\.)[0-9]*$,123423.982734,seconds,Positive float number for time acquired with python using the OS clock
+1,float,^[-]?([0-9]?\.|[1-9][\d]*\.)[0-9]*$,-1.99834,volts,Daq input channel
+2,float,^[-]?([0-9]?\.|[1-9][\d]*\.)[0-9]*$,-1.99834,volts,Daq input channel
+3,float,^[-]?([0-9]?\.|[1-9][\d]*\.)[0-9]*$,-1.99834,volts,Daq input channel

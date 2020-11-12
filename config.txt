@@ -38,7 +38,7 @@ samples per channel per step = 100
     # PM: Power meter
     # APD: APD
 
-AO1 = AO2
+AO0 = Laser
 AI0 = AO0
 AI1 = PM
 AI2 = APD
@@ -46,7 +46,7 @@ AI2 = APD
 ##################################################################
 [Extra Parameters]
 # Include more if needed. These values will be recorded 
-# on the xplog.csv file
+# on the datalogs.csv file
 
 sample = s000
 APD gain = min
