@@ -52,9 +52,13 @@ while running:
     if action == '5':
         running = False
         print('Closing...\n')
-        Daq.savelog()
-        # chack if the data is saved and ask for action
-        # input('Do you ')
+        if Daq.isdatasaved():
+            yORn = input('Would you like to save last data? [y/n]: ').lower.strip()
+            while (yORn != 'y') and (yORn != 'n'):
+                yORn = input('Would you like to save last data? [y/n]: ').lower.strip()
+            if yORn == 'y':
+                Daq.save()
+            else: Daq.savelog()
 
     elif action == '4':
         print('Plotting...\n')
@@ -66,7 +70,11 @@ while running:
 
     elif action == '2':
         print('Running...\n')
-        Daq.run()
+        try:
+            Daq.run()
+        except:
+            print('Something went wrong...\n',
+            'Check if devide is connected and its name is Dev1, then try again.\n')
 
     elif action == '1':
         print('Change the file, save and close it.')

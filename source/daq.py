@@ -75,6 +75,11 @@ class Controler():
             'extra_params', 'user', 'app_version'
         ]))
 
+    def isdatasaved(self):
+        """Checks if last collected data is saved.
+        If log is eempty means that the data was already saved and log was cleaned up.
+        """
+        return(not self._log.empty)
 
     def _xpconfig(self):
         """
