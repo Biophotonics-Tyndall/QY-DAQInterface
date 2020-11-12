@@ -1,4 +1,0 @@
-,exp_id,saved_name,out_ch,range_start,range_end,range_step_size,in_chs,time_per_step,samples_per_ch,sampling_rate,samples_per_ch_to_read,extra_params,user,app_version
-0,20201105-193014,,ao1,0.0,1.0,0.1,ai0 ai1 ai2,0.1,100,1000.0,READ_ALL_AVAILABLE,sample=s000/apd gain=min/density filter=ND1/comments=,jsmatias,QyApp-v0.0.1
-1,20201105-193132,,ao1,0.0,1.0,0.1,ai0 ai1 ai2,0.1,100,1000.0,READ_ALL_AVAILABLE,sample=s000/apd gain=min/density filter=ND1/comments=,jsmatias,QyApp-v0.0.1
-0,20201105-193548,,ao1,0.0,1.0,0.1,ai0 ai1 ai2,0.1,100,1000.0,READ_ALL_AVAILABLE,sample=s000/apd gain=min/density filter=ND1/comments=,jsmatias,QyApp-v0.0.1

@@ -61,12 +61,20 @@ class Controler():
                                       for key in range(self._nChannels)})
         self._clock = {'time': []}
 
-        self._log = pd.DataFrame(columns=[
+        self._log = self._createlog()
+
+        
+
+    def _createlog(self):
+        """ Creates dataframe to log the experimental details
+        """
+        return(pd.DataFrame(columns=[
             'exp_id', 'saved_name', 'out_ch', 'range_start', 'range_end', 'range_step_size',
             'in_chs', 'time_per_step', 'samples_per_ch', 'sampling_rate',
             'min_reading_val', 'max_reading_val', 'samples_per_ch_to_read',
             'extra_params', 'user', 'app_version'
-        ])
+        ]))
+
 
     def _xpconfig(self):
         """
@@ -350,45 +358,25 @@ class Controler():
         savelog() updates log file with all experiment details, including the ones not saved.
         """
         # check if file already exists and havee same structure
-        logfilePath = './data/xplog.csv'
+        logfilePath = './data/datalogs.csv'
 
         if not self._log.empty:
             try:
-                with open(logfilePath, 'r') as logfile:
-                    header = logfile.readline()
-                
-                header = [e in header.strip().split(',') if e]
-                header.sort()
-                localColNames = [e for e in self._log.columns]
-                localColNames.sort()
-
-                if header == localColNames:
-                    # append to file
-                    self._log.to_csv(logfilePath, mode='a', header=False)
-                else:
-                    print(
-                        "The header of the file {logfilePath} doesn't match with the pattern.\n",
-                        "I'll rename it and save log to new file."
-                    )
-                    renamed = f"./data/xplog_renamed_{datetime.now().strftime('%Y%m%d_%H%M%S')}.csv"
-                    os.rename(logfilePath, renamed)
-                    # save
-                    self._log.to_csv(logfilePath)
+                # open existing log file
+                savedLog = pd.read_csv(logfilePath)
+                # concat and save
+                pd.concat([savedLog, self._log]).to_csv(logfilePath, index=False)
 
             except FileNotFoundError:
-                print(f'Unable to find file:{logfilePath}...\n',
+                print(f'Unable to find file: {logfilePath}...\n',
                     "Relax, I'll try create it for you!"
                     )
-                self._log.to_csv(logfilePath)
+                self._log.to_csv(logfilePath, index=False)
 
-            print(f'Experiment Log file saved to: {logfilePath}')
+            print(f'Data logs file saved to: {logfilePath}')
 
         # reset log
-        self._log = pd.DataFrame(columns=[
-            'exp_id', 'saved_name', 'out_ch', 'range_start', 'range_end', 'range_step_size',
-            'in_chs', 'time_per_step', 'samples_per_ch', 'sampling_rate', 'samples_per_ch_to_read',
-            'extra_params', 'user', 'app_version'
-        ])
+        self._log = self._createlog()
 
     def save(self):
         """

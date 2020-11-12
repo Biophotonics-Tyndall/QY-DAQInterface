@@ -9,7 +9,7 @@ __pycache__/
 add-path.bat
 
 # ignore xplog file
-data/xplog.csv
+data/datalogs.csv
 
 # Ignore png files
 *.png
