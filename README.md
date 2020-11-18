@@ -2,6 +2,7 @@
 ## QyApp v1.0.0 
 
 **_UNDER DEVELOPMENT_**
+
 Available for production environment on MS Windows, MacOS and Linux.
 
 ## Description
@@ -54,3 +55,12 @@ With data acquired the data is displayed in a dynamic graph with one subplot per
 ### Contact info:
 
 **Author** Jean Matias || **email**: jean.matias@tyndall.ie 
+
+---
+
+## Updates
+
+v1.0.1 - Minor changes and bugs fixed
+- [x] Metadata columns renamed
+- [x] Included channels connections to datalogs: ex.: ai1=PM
+- [x] Bug on save data: Crashing after saved once

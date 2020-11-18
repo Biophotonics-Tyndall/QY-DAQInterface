@@ -77,14 +77,14 @@ class Controler():
 
     def isdatasaved(self):
         """Checks if last collected data is saved.
-        If log is eempty means that the data was already saved and log was cleaned up.
+        If log is empty means that the data was already saved and log was cleaned up.
         """
-        return(not self._log.empty)
+        return(self._log.empty)
 
     def _xpconfig(self):
         """
         _get_xpconfig()
-        Gets and sets experiment parameters from external .ini file.
+        Gets and sets experiment parameters from external .txt file.
         """
         self._config = configparser.ConfigParser()
         self._config.read("config.txt")
@@ -227,7 +227,7 @@ class Controler():
         # concat clock and daqdata
         self._data = pd.concat([self._clock, self._daqdata], axis=1)
 
-        # linear inerpolation // it doesn't consider the 0.02 s between the tasks.
+        # linear interpolation // it doesn't consider the 0.02 s between the tasks.
         self._data['time'].interpolate(inplace=True)
 
         # include details to log
@@ -332,17 +332,24 @@ class Controler():
         return(self._data)
 
     def updatelog(self):
-        """updatelog() logs last pameters and attributes a id to it.
+        """updatelog() logs last parameters and attributes a id to it.
         """
         now = datetime.now().strftime('%Y%m%d-%H%M%S')
         log = pd.DataFrame(columns=self._log.columns, index=[0])
 
         log['exp_id'] = now
-        log['out_ch'] = self._OUT_CHANNEL[0]
+        # log['out_ch'] = self._OUT_CHANNEL[0]
+        log['out_ch'] = '/'.join([
+            f"{ch}={self._config['Channels'][ch]}" for ch in self._OUT_CHANNEL
+        ])
+
         log['range_start'] = self._RANGE_START
         log['range_end'] = self._RANGE_END
         log['range_step_size'] = self._STEP_SIZE
-        log['in_chs'] = ' '.join(self._IN_CHANNELS)
+        # log['in_chs'] = ' '.join(self._IN_CHANNELS)
+        log['in_chs'] = '/'.join([
+            f"{ch}={self._config['Channels'][ch]}" for ch in self._IN_CHANNELS
+        ])
         log['time_per_step'] = self._TIME_PER_STEP
         log['samples_per_ch'] = self._INTERNAL_SAMPLES_PER_CH
         log['sampling_rate'] = self._SAMPLING_RATE
@@ -362,7 +369,7 @@ class Controler():
         """
         savelog() updates log file with all experiment details, including the ones not saved.
         """
-        # check if file already exists and havee same structure
+        # check if file already exists and have same structure
         logfilePath = './data/datalogs.csv'
 
         if not self._log.empty:
@@ -387,18 +394,20 @@ class Controler():
         """
         Save data to csv file and updates logfile
         """
-
         if not self._data.empty:
-            # gets exp id from last row of log
-            expId = self._log.loc[self._log.shape[0] -
-                                1, 'exp_id'].replace('-', '_')
-            fileName = f'./data/raw-data/qy_{expId}.csv'
-            self._data.to_csv(fileName)
-            print(f'Data saved to: {fileName}')
+            if self.isdatasaved():
+                # gets exp id from last row of log
+                expId = self._log.loc[self._log.shape[0] -
+                                    1, 'exp_id'].replace('-', '_')
+                fileName = f'./data/raw-data/qy_{expId}.csv'
+                self._data.to_csv(fileName)
+                print(f'Data saved to: {fileName}')
 
-            # updates log before saving
-            self._log.loc[self._log.shape[0] - 1, 'saved_name'] = fileName
-            self.savelog()
+                # updates log before saving
+                self._log.loc[self._log.shape[0] - 1, 'saved_name'] = fileName
+                self.savelog()
+            else:
+                print('Data already saved...')
         else: print('No data to save...')
 
     def plot(self):

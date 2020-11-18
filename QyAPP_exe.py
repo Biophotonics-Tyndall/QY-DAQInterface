@@ -71,7 +71,7 @@ def main():
         if action == 'x':
             running = False
             print('Closing...\n')
-            if Daq.isdatasaved():
+            if not Daq.isdatasaved():
                 yORn = input(
                     'Would you like to save last data? [y/n]: ').lower().strip()
                 while (yORn != 'y') and (yORn != 'n'):
@@ -98,7 +98,7 @@ def main():
             except Exception as e:
                 logging.error(str(e))
                 print('Something went wrong...\n',
-                      'Check if devide is connected and its name is Dev1, then try again.\n')
+                      'Check if device is connected and its name is Dev1, then try again.\n')
 
         elif action == 't':
             print('Change the file, save and close it.')
