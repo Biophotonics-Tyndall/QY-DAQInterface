@@ -1,6 +1,7 @@
 # QY-DAQInterface
 ## QyApp v1.0.0 
 
+**_UNDER DEVELOPMENT_**
 Available for production environment on MS Windows, MacOS and Linux.
 
 ## Description
