@@ -1,6 +1,8 @@
 # QY-DAQInterface
 ## QyApp v1.0.1
 
+**_UNDER DEVELOPMENT_**
+
 Available for production environment on MS Windows, MacOS and Linux.
 
 ## Description
@@ -57,6 +59,10 @@ With data acquired the data is displayed in a dynamic graph with one subplot per
 ---
 
 ## Updates
+
+v1.0.2 - 
+- [ ] Update extraparams from config.txt before saving. In this way the user will be able to review this parameters before deciding to save
+- [ ] Include flag of data not saved on front panel
 
 v1.0.1 - Minor changes and bugs fixed
 - [x] Metadata columns renamed
