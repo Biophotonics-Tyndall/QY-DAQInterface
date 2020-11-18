@@ -1,6 +1,6 @@
 ##################################################################
 # Measurement config file
-# QY - app controller | v.0.0.1
+# QyApp | v.1.0.1
 ##################################################################
 [Laser]
 # Output channel range (in volts)
@@ -51,7 +51,7 @@ AI2 = APD
 sample = s000
 APD gain = min
 density filter = ND1
-comments = 
+comments = -
 
 ##################################################################
 [Graph Settings]

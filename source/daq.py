@@ -395,7 +395,7 @@ class Controler():
         Save data to csv file and updates logfile
         """
         if not self._data.empty:
-            if self.isdatasaved():
+            if not self.isdatasaved():
                 # gets exp id from last row of log
                 expId = self._log.loc[self._log.shape[0] -
                                     1, 'exp_id'].replace('-', '_')
