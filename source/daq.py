@@ -7,6 +7,10 @@ import configparser
 import getpass
 import os
 import pandas as pd
+import matplotlib
+matplotlib.use('TkAgg')
+# matplotlib.use('Agg') # Not a GUI backend
+# matplotlib.use('Qt5Agg') # Need installation
 import matplotlib.pyplot as pl
 import numpy as np
 import time
@@ -14,10 +18,10 @@ from datetime import datetime
 from tqdm import tqdm
 import json
 
-
 class Controler():
     """
     """
+    debug = False
     _daqdata = pd.DataFrame()
     _clock = {}
     _data = pd.DataFrame()
@@ -59,9 +63,15 @@ class Controler():
 
         self._daqdata = pd.DataFrame({key: []
                                       for key in range(self._nChannels)})
-        self._clock = {'time': []}
 
+        self._clock = {'time': []}
         self._log = self._createlog()
+        pl.close()
+        if self.debug:
+            fileName = './data/raw-data/qy_ddmmyy_hms.csv'
+            self._data = pd.read_csv(fileName, usecols=[1, 2, 3, 4])
+            self._data.columns = ['time', 0, 1, 2]
+            self._log.loc[0] = ['test'] * self._log.shape[1]
 
     def status(self):
         """Returns message regarding data:
@@ -417,29 +427,44 @@ class Controler():
                 print('Data already saved...')
         else: print('No data to save...')
 
+    def initializeplotgui(self):
+        """Initialize matplotlib figure and axes interface.
+        """
+        # Get configs dynamically without the need to run the experiment again
+        # in order to update the plot settings
+        dynamConfig = configparser.ConfigParser()
+        dynamConfig.read("config.txt")
+        gConfig = dynamConfig['Graph Settings']
+        pl.rcParams.update({'font.size': float(gConfig['font size'])})
+        # 1 subplot per channel
+        self._fig, self._axs = pl.subplots(self._nChannels, sharex=True,
+                                    figsize=[
+                                        float(i) for i in gConfig['graph size'].split(',')]
+                                    )
+        self._axs[-1].set_xlabel('Time (s)')
+
+        pl.ion()
+
     def plot(self):
         """
         Plots the data from channels vs time
         """
         
         if not self._data.empty:
-            # Get configs dynamically without the need to run the experiment again
-            # in order to update the plot settings
+            if pl.get_fignums() == []:
+                self.initializeplotgui()
             dynamConfig = configparser.ConfigParser()
             dynamConfig.read("config.txt")
             gConfig = dynamConfig['Graph Settings']
             cConfig = self._config['Channels']
-            pl.rcParams.update({'font.size': float(gConfig['font size'])})
-            # 1 subplot per channel
-            fig01, axs = pl.subplots(self._nChannels, sharex=True,
-                                     figsize=[
-                                         float(i) for i in gConfig['graph size'].split(',')]
-                                     )
-
-            pl.ion()
-
+            self._axs[0].set_title(gConfig['title'])
+            if self._axs[0].lines:
+                action = input('Overwrite data? [y or press enter]: ')
+                if action == 'y':
+                    for n in range(self._nChannels): 
+                        self._axs[n].lines = []
             for n in range(self._nChannels):
-                axs[n].plot(self._data['time'], self._data[n], label=gConfig['label'],
+                self._axs[n].plot(self._data['time'], self._data[n], label=gConfig['label'],
                             marker=gConfig['marker'],
                             ms=float(gConfig['marker size']),
                             color=gConfig['colour'],
@@ -447,15 +472,12 @@ class Controler():
                             linestyle=gConfig['line style'],
                             lw=float(gConfig['line width'])
                             )
-                axs[n].legend(title=f"Ch.{n}: {cConfig[self._IN_CHANNELS[n]]}")
-                axs[n].set_ylabel('Input (V)')
-                axs[n].grid(gConfig['grid'])
+                self._axs[n].legend(title=f"Ch.{n}: {cConfig[self._IN_CHANNELS[n]]}")
+                self._axs[n].set_ylabel('Input (V)')
+                self._axs[n].grid(gConfig['grid'])
 
-            axs[-1].set_xlabel('Time (s)')
-            axs[0].set_title(gConfig['title'])
-
-            fig01.tight_layout()
-            fig01.show()
+            self._fig.tight_layout()
+            self._fig.show()
             print('Data plotted...')
         else:
             print('No data to plot...')

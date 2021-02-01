@@ -10,12 +10,14 @@ logging.basicConfig(
     datefmt='%d/%m/%Y %I:%M:%S %p'
 )
 
+debug = False
 
 def main():
     from source.daq import Controler
     # import configparser
 
     # Create daq object
+    Controler.debug = debug
     Daq = Controler()
 
     def clear():
@@ -28,45 +30,33 @@ def main():
     width = 70
     upHline = '  ' + '\u250C' + '\u2500' * (width - 4) + '\u2510'
     downHline = '  ' + '\u2514' + '\u2500' * (width - 4) + '\u2518'
-    statusMsg = Daq.status()
+    print('Atention! The saved data will be always the last run!')
+    input('>> ')
 
-    menu = '\n'.join([
-        upHline,
-        row(" "),
-        row("       QY - System"),
-        row(f"       \xa9 {Daq._appDetails['name']} v{Daq._appDetails['version']}"),
-        row(" "),
-        row(" "),
-        row("    t. Settings"),
-        row("    r. Run"),
-        row("    s. Save"),
-        row("    p. Plot data"),
-        row("    x. Exit"),
-        row(" "),
-        row(f"  {statusMsg}"),
-        downHline,
-    ])
-
-    # menu = '\n'.join([
-    #         upHline,
-    #         row(" "),
-    #         row("       QY - System"),
-    #         row("       \xa9 QyAPP v.0.0.1"),
-    #         row(" "),
-    #         row(" "),
-    #         row("    1. \u2699 Settings"),
-    #         row("    2. \u25b6 Run"),
-    #         row("    3. \U0001f4be\u0000 Save"),
-    #         row("    4. \U0001f4c8\u0000 Plot data"),
-    #         row("    5. \u274c\u0000 Exit"),
-    #         row(" "),
-    #         downHline,
-    #     ])
+    def menu(statusMsg):
+        return(
+            '\n'.join([
+                upHline,
+                row(" "),
+                row("       QY - System"),
+                row(f"       \xa9 {Daq._appDetails['name']} v{Daq._appDetails['version']}"),
+                row(" "),
+                row(" "),
+                row("    t. Settings"),
+                row("    r. Run"),
+                row("    s. Save"),
+                row("    p. Plot data"),
+                row("    x. Exit"),
+                row(" "),
+                row(f"  {statusMsg}"),
+                downHline,
+            ])
+        )
 
     running = True
     while running:
         clear()
-        print(menu)
+        print(menu(Daq.status()))
         action = input('   >> ').lower().strip()
 
         clear()
