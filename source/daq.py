@@ -63,7 +63,14 @@ class Controler():
 
         self._log = self._createlog()
 
-        
+    def status(self):
+        """Returns message regarding data:
+            1. No data to be saved
+            2. Last measurement not saved
+        """
+        if self.isdatasaved():
+            return('No data to be saved...')
+        else: return('Data not saved...') 
 
     def _createlog(self):
         """ Creates dataframe to log the experimental details
@@ -327,7 +334,7 @@ class Controler():
         print('Done!')
 
     def data(self):
-        """Returns the consolidade data with time attached
+        """Returns the consolidate data with time attached
         """
         return(self._data)
 

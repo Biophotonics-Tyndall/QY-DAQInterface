@@ -60,10 +60,15 @@ With data acquired the data is displayed in a dynamic graph with one subplot per
 
 ## Updates
 
+v1.1.0 - Major change on measurement
+- [ ] Include option on measurement to return laser current to 0 before ramping up to next step. 
+
 v1.0.2 - 
 - [ ] Update extraparams from config.txt before saving. In this way the user will be able to review this parameters before deciding to save
 - [ ] Include flag of data not saved on front panel
-
+- [ ] Label of plot not taking channel number from config.txt
+- [ ] Bug! Matplotlib raising error: RuntimeError: main thread is not in main loop [description](output\logs\matplotlib_error_details.txt). Possible solution: pl.use("Qt5Agg") // or TkAgg or Agg. Details [here](https://youtrack.jetbrains.com/issue/PY-29872)
+  
 v1.0.1 - Minor changes and bugs fixed
 - [x] Metadata columns renamed
 - [x] Included channels connections to datalogs: ex.: ai1=PM

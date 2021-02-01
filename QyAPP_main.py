@@ -28,6 +28,7 @@ def main():
     width = 70
     upHline = '  ' + '\u250C' + '\u2500' * (width - 4) + '\u2510'
     downHline = '  ' + '\u2514' + '\u2500' * (width - 4) + '\u2518'
+    statusMsg = Daq.status()
 
     menu = '\n'.join([
         upHline,
@@ -42,6 +43,7 @@ def main():
         row("    p. Plot data"),
         row("    x. Exit"),
         row(" "),
+        row(f"  {statusMsg}"),
         downHline,
     ])
 
