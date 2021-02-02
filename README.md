@@ -1,5 +1,5 @@
 # QY-DAQInterface
-## QyApp v1.0.1
+## QyApp v1.1.0
 
 **_UNDER DEVELOPMENT_**
 
