@@ -10,7 +10,7 @@ logging.basicConfig(
     datefmt='%d/%m/%Y %I:%M:%S %p'
 )
 
-debug = True
+debug = False
 
 def main():
     from source.daq import Controler
