@@ -37,6 +37,7 @@ class Controler():
     _RANGE_START = 0.0  # V
     _RANGE_END = 1.0  # V
     _STEP_SIZE = 0.1  # V
+    _STEP_RESET = False # resets the step to 0 before moving to next one
     _TIME_PER_STEP = 0.1  # s
 
     # DAQ uses this to calculate the buffer size
@@ -50,7 +51,6 @@ class Controler():
     _SAMPLING_RATE = _INTERNAL_SAMPLES_PER_CH / _TIME_PER_STEP
     _MIN_READING_VAL = -5.0
     _MAX_READING_VAL = 5.0
-
 
 
     def __init__(self):
@@ -87,7 +87,7 @@ class Controler():
         """
         return(pd.DataFrame(columns=[
             'exp_id', 'saved_name', 'out_ch', 'range_start', 'range_end', 'range_step_size',
-            'in_chs', 'time_per_step', 'samples_per_ch', 'sampling_rate',
+            'step_reset', 'in_chs', 'time_per_step', 'samples_per_ch', 'sampling_rate',
             'min_reading_val', 'max_reading_val', 'samples_per_ch_to_read',
             'extra_params', 'user', 'app_version'
         ]))
@@ -117,6 +117,7 @@ class Controler():
         self._RANGE_START = float(self._config['Laser']['start'])
         self._RANGE_END = float(self._config['Laser']['end'])
         self._STEP_SIZE = float(self._config['Laser']['step size'])
+        self._STEP_RESET = True if self._config['Laser']['reset'] == 'yes' else False
 
         # Set timing
         self._TIME_PER_STEP = float(self._config['Timing']['time per step'])
@@ -129,6 +130,10 @@ class Controler():
         self._MAX_READING_VAL = float(self._config['Sampling']['max voltage'])
 
         self._outputArr = np.arange(self._RANGE_START, self._RANGE_END, self._STEP_SIZE)
+        if self._STEP_RESET:
+            tempArr = np.delete(self._outputArr, np.where(self._outputArr==0))
+            self._outputArr = np.zeros(2 * tempArr.size)
+            self._outputArr[1::2] = tempArr
 
     def run(self):
         """Run method set to collect data at every N samples. 
@@ -197,7 +202,7 @@ class Controler():
                 taskSlave.stop()
                 pbar.close()
 
-            # dt = (t - t0) / 10 ** 6 # conver ns to ms
+            # dt = (t - t0) / 10 ** 6 # convert ns to ms
             # print(f'{number_of_samples} samples in {dt:.3f}', end='\r')
             return 0
 
@@ -363,6 +368,7 @@ class Controler():
         log['range_start'] = self._RANGE_START
         log['range_end'] = self._RANGE_END
         log['range_step_size'] = self._STEP_SIZE
+        log['step_reset'] = self._STEP_RESET
         # log['in_chs'] = ' '.join(self._IN_CHANNELS)
         log['in_chs'] = '/'.join([
             f"{ch}={self._config['Channels'][ch]}" for ch in self._IN_CHANNELS
@@ -398,7 +404,7 @@ class Controler():
 
             except FileNotFoundError:
                 print(f'Unable to find file: {logfilePath}...\n',
-                    "Relax, I'll try create it for you!"
+                    "Relax, I'll try to create it for you!"
                     )
                 self._log.to_csv(logfilePath, index=False)
 
@@ -457,6 +463,8 @@ class Controler():
             dynamConfig.read("config.txt")
             gConfig = dynamConfig['Graph Settings']
             cConfig = self._config['Channels']
+            extraPConfig = self._config['Extra Parameters']
+
             self._axs[0].set_title(gConfig['title'])
             if self._axs[0].lines:
                 action = input('Overwrite data? [y or press enter]: ')
@@ -464,7 +472,8 @@ class Controler():
                     for n in range(self._nChannels): 
                         self._axs[n].lines = []
             for n in range(self._nChannels):
-                self._axs[n].plot(self._data['time'], self._data[n], label=gConfig['label'],
+                label = extraPConfig[gConfig['label']] if gConfig['label'] in extraPConfig else gConfig['label']
+                self._axs[n].plot(self._data['time'], self._data[n], label=label,
                             marker=gConfig['marker'],
                             ms=float(gConfig['marker size']),
                             color=gConfig['colour'],

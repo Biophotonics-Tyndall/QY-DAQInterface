@@ -10,7 +10,7 @@ logging.basicConfig(
     datefmt='%d/%m/%Y %I:%M:%S %p'
 )
 
-debug = False
+debug = True
 
 def main():
     from source.daq import Controler
@@ -87,6 +87,7 @@ def main():
             print('Running...\n')
             try:
                 Daq.run()
+                # bug here. Should close the task after the error. 
             except Exception as e:
                 logging.error(str(e))
                 print('Something went wrong...\n',

@@ -61,12 +61,15 @@ With data acquired the data is displayed in a dynamic graph with one subplot per
 ## Updates
 
 
-v1.1.2 - 
+v1.1.1 - Minor changes
 - [ ] Update extraparams from config.txt before saving. In this way the user will be able to review this parameters before deciding to save
-- [ ] Label of plot not taking channel number from config.txt
 
-v1.1.0 - Major change on measurement
-- [ ] Include option on measurement to return laser current to 0 before ramping up to next step. 
+v1.1.0 - Minor update on measurement. New feature included
+- [x] Include option on measurement to return laser current to 0 before ramping up to next step.
+> List of changes:
+> 1. `reset` option on config file
+> 2. `step_reset` column included on log file
+ 
 - [x] Include flag of data not saved on front panel
 - [x] Bug! Matplotlib raising error: RuntimeError: main thread is not in main loop [description](output\logs\matplotlib_error_details.txt). Possible solution: pl.use("Qt5Agg") // or TkAgg or Agg. Details [here](https://youtrack.jetbrains.com/issue/PY-29872)
   

@@ -1,14 +1,14 @@
 ##################################################################
 # Measurement config file
-# QyApp | v.1.0.1
+# QyApp | v.1.1.0
 ##################################################################
 [Laser]
 # Output channel range (in volts)
-
-# output channel
-start = 0.0
-end = 1.0
-step size = 0.1
+    # max end: 1.678 for L785nm and 5.4 for L976nm
+start = 0
+end = 5.4
+step size = 0.08
+reset = no
 
 ##################################################################
 [Timing]
@@ -27,7 +27,7 @@ time per step = 0.1
 min voltage = 0.0
 max voltage = 10.0
 
-samples per channel per step = 100
+samples per channel per step = 1000
 
 ##################################################################
 [Channels]
@@ -39,33 +39,40 @@ samples per channel per step = 100
     # APD: APD
 
 AO0 = Laser
-AI0 = AO0
+AI0 = Trigger
 AI1 = PM
 AI2 = APD
+# AI3 = APDRaw
 
 ##################################################################
 [Extra Parameters]
-# Include more if needed. These values will be recorded 
+# Include more if needed. These values will be stored 
 # on the datalogs.csv file
 
-sample = s000
+sample = s013
 APD gain = min
-density filter = ND1
+density filter = 0
+sonication time = 5 mins
+power meter range = 600mW
+laser wavelength = 976nm
+amplifier bandwidth = 100kHz
+amplifier gain = 20dB
 comments = -
 
 ##################################################################
 [Graph Settings]
 # Change matplotlib graph preferences
 # Color names: https://htmlcolorcodes.com/color-names/
+# New! Label can be set as a key word from Extra Parameters
 
-graph size = 7,8
-font size = 18
-title = UCNPS dynamics
-label = run 01
-colour = blue
+graph size = 7,7
+font size = 12
+title = UCNP
+label = min
+colour = orange
 alpha = 0.7
-marker = o
-marker size = 2
+marker = s
+marker size = 4
 line style = -
 line width = 1
 grid = on
