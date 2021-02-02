@@ -49,7 +49,7 @@ AI2 = APD
 # Include more if needed. These values will be stored 
 # on the datalogs.csv file
 
-sample = s013
+sample = s014
 APD gain = min
 density filter = 0
 sonication time = 5 mins
@@ -68,12 +68,12 @@ comments = -
 graph size = 7,7
 font size = 12
 title = UCNP
-label = min
+label = sample
 colour = orange
 alpha = 0.7
-marker = s
-marker size = 4
-line style = -
+marker = >
+marker size = 5
+line style = -.
 line width = 1
 grid = on
 
