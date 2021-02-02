@@ -1,7 +1,5 @@
 # QY-DAQInterface
-## QyApp v1.1.0
-
-**_UNDER DEVELOPMENT_**
+## QyApp v1.1.0 **Beta**
 
 Available for production environment on MS Windows, MacOS and Linux.
 
@@ -59,10 +57,6 @@ With data acquired the data is displayed in a dynamic graph with one subplot per
 ---
 
 ## Updates
-
-
-v1.1.1 - Minor changes
-- [ ] Update extraparams from config.txt before saving. In this way the user will be able to review this parameters before deciding to save
 
 v1.1.0 - Minor update on measurement. New feature included
 - [x] Include option on measurement to return laser current to 0 before ramping up to next step.
