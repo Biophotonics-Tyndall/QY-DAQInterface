@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+    <html>
+    <head>
+        <meta charset="UTF-8">
+        <title>QY-DAQInterface</title>
+        <style>
+</style>
+        
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/Microsoft/vscode/extensions/markdown-language-features/media/markdown.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/Microsoft/vscode/extensions/markdown-language-features/media/highlight.css">
+<style>
+            body {
+                font-family: -apple-system, BlinkMacSystemFont, 'Segoe WPC', 'Segoe UI', system-ui, 'Ubuntu', 'Droid Sans', sans-serif;
+                font-size: 14px;
+                line-height: 1.6;
+            }
+        </style>
+        <style>
+.task-list-item { list-style-type: none; } .task-list-item-checkbox { margin-left: -20px; vertical-align: middle; }
+</style>
+        
+        
+        
+    </head>
+    <body class="vscode-body vscode-light">
+        <h1 id="qy-daqinterface">QY-DAQInterface</h1>
+<h2 id="qyapp-v110">QyApp v1.1.0</h2>
+<p><strong><em>UNDER DEVELOPMENT</em></strong></p>
+<p>Available for production environment on MS Windows, MacOS and Linux.</p>
+<h2 id="description">Description</h2>
+<p>This software is able to control NI-DAQ ports (input and output).
+The main application for the current version is to modulate a laser driver using one of the output ports of the DAQ in order to excite upconverting nanoparticle samples and acquire their emission and transmission using the input ports.</p>
+<h2 id="installation-instruction">Installation instruction</h2>
+<p>The installation requires <strong><em>Python 3.4</em></strong> or above versions as well as its package manager (<em>pip</em>). Once python is installed:</p>
+<ol>
+<li>Download all the content from <a href="https://github.com/Biophotonics-Tyndall/QY-DAQInterface/tree/master">https://github.com/Biophotonics-Tyndall/QY-DAQInterface/tree/master</a></li>
+<li>Open a terminal (cmd on Windows) and navigate to the folder containing the downloaded files</li>
+</ol>
+<pre><code><code><div>cd &lt;path/to/folder/&gt;
+</div></code></code></pre>
+<ol start="3">
+<li>Run:</li>
+</ol>
+<pre><code><code><div>pip install -r ./setup/requirements.txt
+</div></code></code></pre>
+<h2 id="running-the-controller">Running the controller</h2>
+<p>To use the controller make sure that the DAQ is connected to the computer by USB and it has installed its driver.</p>
+<pre><code>⚠️ For linux or MacOs the driver may not be available and should be installed manually if provided by NI.
+</code></pre>
+<h2 id="folder-structure">Folder structure</h2>
+<ul>
+<li><a href="./setup/">setup/</a>: Auxiliary files to install required packages</li>
+<li><a href="./docs/">docs/</a>: Manuals and Ni-DAQ6212 datasheets. (This files might not be available on github repository)</li>
+<li><a href="./data/">data/</a>: Folder where the acquired raw-data is saved</li>
+<li><a href="./output/">output/</a>: png plots are saved</li>
+<li><a href="./source/">source/</a>: Python scripts to control the DAQ, create plots, manage the data, etc.</li>
+</ul>
+<h2 id="user-manual">User manual</h2>
+<p>For windows, on the root folder double click on <em>QyApp.bat</em> file. This file will call python in a cmd and run the main code. The following user panel shall start.</p>
+<p><img src="file:///c:\Users\jean.matias\Documents\develop\QY-DAQInterface\docs\.user_panel.png" alt="User Panel" title="User Panel"></p>
+<p>Done! Just follow the instruction on the screen.</p>
+<h2 id="output-example">Output example:</h2>
+<p>With data acquired the data is displayed in a dynamic graph with one subplot per channel acquired. You can add all the channels needed for the experiment.</p>
+<p><img src="file:///c:\Users\jean.matias\Documents\develop\QY-DAQInterface\output\plots\.output_temp.png" alt="First test" title="output data example"></p>
+<h3 id="contact-info">Contact info:</h3>
+<p><strong>Author</strong> Jean Matias || <strong>email</strong>: <a href="mailto:jean.matias@tyndall.ie">jean.matias@tyndall.ie</a></p>
+<hr>
+<h2 id="updates">Updates</h2>
+<p>v1.1.1 - Minor changes</p>
+<ul class="contains-task-list">
+<li class="task-list-item"><input class="task-list-item-checkbox" disabled="" type="checkbox"> Update extraparams from config.txt before saving. In this way the user will be able to review this parameters before deciding to save</li>
+</ul>
+<p>v1.1.0 - Minor update on measurement. New feature included</p>
+<ul class="contains-task-list">
+<li class="task-list-item"><input class="task-list-item-checkbox" checked="" disabled="" type="checkbox"> Include option on measurement to return laser current to 0 before ramping up to next step.</li>
+</ul>
+<blockquote>
+<p>List of changes:</p>
+<ol>
+<li><code>reset</code> option on config file</li>
+<li><code>step_reset</code> column included on log file</li>
+</ol>
+</blockquote>
+<ul class="contains-task-list">
+<li class="task-list-item"><input class="task-list-item-checkbox" checked="" disabled="" type="checkbox"> Include flag of data not saved on front panel</li>
+<li class="task-list-item"><input class="task-list-item-checkbox" checked="" disabled="" type="checkbox"> Bug! Matplotlib raising error: RuntimeError: main thread is not in main loop <a href="output%5Clogs%5Cmatplotlib_error_details.txt">description</a>. Possible solution: pl.use(&quot;Qt5Agg&quot;) // or TkAgg or Agg. Details <a href="https://youtrack.jetbrains.com/issue/PY-29872">here</a></li>
+</ul>
+<p>v1.0.1 - Minor changes and bugs fixed</p>
+<ul class="contains-task-list">
+<li class="task-list-item"><input class="task-list-item-checkbox" checked="" disabled="" type="checkbox"> Metadata columns renamed</li>
+<li class="task-list-item"><input class="task-list-item-checkbox" checked="" disabled="" type="checkbox"> Included channels connections to datalogs: ex.: ai1=PM</li>
+<li class="task-list-item"><input class="task-list-item-checkbox" checked="" disabled="" type="checkbox"> Bug on save data: Crashing after saved once</li>
+</ul>
+
+    </body>
+    </html>
