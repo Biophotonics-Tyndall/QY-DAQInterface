@@ -3,6 +3,7 @@ archive/
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
+backup/
 
 # ignore .bat file
 add-path.bat
