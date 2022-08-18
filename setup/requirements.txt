@@ -1,7 +1,6 @@
-ipython==7.13.0
-matplotlib==3.2.1
-numpy==1.18.2
-pandas==1.0.3
-pandas-datareader==0.8.1
-tqdm==4.11.2
-nidaqmx==0.5.7
+ipython
+matplotlib
+numpy
+pandas
+tqdm
+nidaqmx

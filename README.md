@@ -12,14 +12,10 @@ The main application for the current version is to modulate a laser driver using
 The installation requires **_Python 3.4_** or above versions as well as its package manager (_pip_). Once python is installed:
 
 1. Download all the content from https://github.com/Biophotonics-Tyndall/QY-DAQInterface/tree/master
-2. Open a terminal (cmd on Windows) and navigate to the folder containing the downloaded files
-```
-cd <path/to/folder/>
-```
-3. Run:
-```
-pip install -r ./setup/requirements.txt
-```
+2. Open the folder [setup](/setup) and double-click the [install.bat](./setup/install.bat) file.
+3. Return to the root folder and double-click the [QYAPPv110](./QyAPPv110.bat) file. 
+
+Once installed, just repeat the step 3. to use the controller. 
 
 ## Running the controller
 
@@ -35,7 +31,7 @@ To use the controller make sure that the DAQ is connected to the computer by USB
 + [output/](./output/): png plots are saved
 + [source/](./source/): Python scripts to control the DAQ, create plots, manage the data, etc.
 
- 
+
 ## User manual
 
 For windows, on the root folder double click on _QyApp.bat_ file. This file will call python in a cmd and run the main code. The following user panel shall start. 

@@ -1,0 +1,368 @@
+01/12/2020 12:19:45 PM | ERROR: No module named 'nidaqmx'
+01/12/2020 12:23:49 PM | ERROR: No module named 'pandas'
+01/12/2020 12:24:32 PM | ERROR: No module named 'matplotlib'
+09/12/2020 11:33:26 AM | ERROR: Shape of passed values is (8, 1), indices imply (7, 1)
+09/12/2020 11:37:16 AM | ERROR: Shape of passed values is (4, 1), indices imply (3, 1)
+09/12/2020 11:40:51 AM | ERROR: Shape of passed values is (20, 1), indices imply (19, 1)
+16/12/2020 10:37:23 AM | ERROR: Shape of passed values is (22, 1), indices imply (9, 1)
+16/12/2020 10:39:54 AM | ERROR: Shape of passed values is (6, 1), indices imply (5, 1)
+16/12/2020 10:40:31 AM | ERROR: Shape of passed values is (20, 1), indices imply (19, 1)
+18/12/2020 03:40:04 PM | ERROR: Shape of passed values is (366, 1), indices imply (270, 1)
+12/01/2021 04:34:23 PM | ERROR: Shape of passed values is (620, 1), indices imply (540, 1)
+20/01/2021 02:13:13 PM | ERROR: Shape of passed values is (77, 1), indices imply (70, 1)
+20/01/2021 02:15:24 PM | ERROR: Shape of passed values is (129, 1), indices imply (70, 1)
+20/01/2021 02:15:53 PM | ERROR: Shape of passed values is (113, 1), indices imply (70, 1)
+20/01/2021 02:22:48 PM | ERROR: Requested Every N Samples Event Interval is not supported for the given Data Transfer Mechanism and buffer size.
+
+To keep DMA or USB Bulk as the Data Transfer Mechanism, modify the buffer size and/or the Every N Samples Event Interval so the buffer size is an even multiple of the Every N Samples Event Interval. To keep the same Every N Samples Event Interval and buffer size, change the Data Transfer Mechanism to Interrupts if supported.
+Property: DAQmx_Every N Samples Acq Into Buffer Event Interval
+Requested Value: 800
+Buffer Size: 10000
+
+Task Name: Slave
+
+Status Code: -200877
+20/01/2021 02:22:53 PM | ERROR: Task name specified conflicts with an existing task name.
+Task Name: Master
+
+Status Code: -200089
+20/01/2021 02:23:40 PM | ERROR: Task name specified conflicts with an existing task name.
+Task Name: Master
+
+Status Code: -200089
+20/01/2021 02:25:01 PM | ERROR: Requested Every N Samples Event Interval is not supported for the given Data Transfer Mechanism and buffer size.
+
+To keep DMA or USB Bulk as the Data Transfer Mechanism, modify the buffer size and/or the Every N Samples Event Interval so the buffer size is an even multiple of the Every N Samples Event Interval. To keep the same Every N Samples Event Interval and buffer size, change the Data Transfer Mechanism to Interrupts if supported.
+Property: DAQmx_Every N Samples Acq Into Buffer Event Interval
+Requested Value: 800
+Buffer Size: 10000
+
+Task Name: Slave
+
+Status Code: -200877
+20/01/2021 02:26:01 PM | ERROR: Requested Every N Samples Event Interval is not supported for the given Data Transfer Mechanism and buffer size.
+
+To keep DMA or USB Bulk as the Data Transfer Mechanism, modify the buffer size and/or the Every N Samples Event Interval so the buffer size is an even multiple of the Every N Samples Event Interval. To keep the same Every N Samples Event Interval and buffer size, change the Data Transfer Mechanism to Interrupts if supported.
+Property: DAQmx_Every N Samples Acq Into Buffer Event Interval
+Requested Value: 800
+Buffer Size: 10000
+
+Task Name: Slave
+
+Status Code: -200877
+20/01/2021 02:30:13 PM | ERROR: Requested Every N Samples Event Interval is not supported for the given Data Transfer Mechanism and buffer size.
+
+To keep DMA or USB Bulk as the Data Transfer Mechanism, modify the buffer size and/or the Every N Samples Event Interval so the buffer size is an even multiple of the Every N Samples Event Interval. To keep the same Every N Samples Event Interval and buffer size, change the Data Transfer Mechanism to Interrupts if supported.
+Property: DAQmx_Every N Samples Acq Into Buffer Event Interval
+Requested Value: 800
+Buffer Size: 10000
+
+Task Name: Slave
+
+Status Code: -200877
+20/01/2021 02:32:02 PM | ERROR: Device cannot be accessed.  Possible causes:
+Device is no longer present in the system.
+Device is not powered.
+Device is powered, but was temporarily without power.
+Device and/or chassis driver support may have been removed.
+Device is damaged.
+Ensure the device is properly connected and turned on. Ensure the device and/or chassis is supported in the current version of the driver. Check the device's status in NI MAX. Turn the computer off and on again. If you suspect that the device is damaged, contact National Instruments at ni.com/support.
+Device Specified: Dev1
+
+Task Name: Master
+
+Status Code: -201003
+20/01/2021 02:42:35 PM | ERROR: Requested Every N Samples Event Interval is not supported for the given Data Transfer Mechanism and buffer size.
+
+To keep DMA or USB Bulk as the Data Transfer Mechanism, modify the buffer size and/or the Every N Samples Event Interval so the buffer size is an even multiple of the Every N Samples Event Interval. To keep the same Every N Samples Event Interval and buffer size, change the Data Transfer Mechanism to Interrupts if supported.
+Property: DAQmx_Every N Samples Acq Into Buffer Event Interval
+Requested Value: 800
+Buffer Size: 10000
+
+Task Name: Slave
+
+Status Code: -200877
+20/01/2021 02:44:34 PM | ERROR: Requested Every N Samples Event Interval is not supported for the given Data Transfer Mechanism and buffer size.
+
+To keep DMA or USB Bulk as the Data Transfer Mechanism, modify the buffer size and/or the Every N Samples Event Interval so the buffer size is an even multiple of the Every N Samples Event Interval. To keep the same Every N Samples Event Interval and buffer size, change the Data Transfer Mechanism to Interrupts if supported.
+Property: DAQmx_Every N Samples Acq Into Buffer Event Interval
+Requested Value: 800
+Buffer Size: 10000
+
+Task Name: Slave
+
+Status Code: -200877
+20/01/2021 02:50:12 PM | ERROR: Task name specified conflicts with an existing task name.
+Task Name: Master
+
+Status Code: -200089
+20/01/2021 02:52:00 PM | ERROR: Task name specified conflicts with an existing task name.
+Task Name: Master
+
+Status Code: -200089
+20/01/2021 02:58:17 PM | ERROR: Requested Every N Samples Event Interval is not supported for the given Data Transfer Mechanism and buffer size.
+
+To keep DMA or USB Bulk as the Data Transfer Mechanism, modify the buffer size and/or the Every N Samples Event Interval so the buffer size is an even multiple of the Every N Samples Event Interval. To keep the same Every N Samples Event Interval and buffer size, change the Data Transfer Mechanism to Interrupts if supported.
+Property: DAQmx_Every N Samples Acq Into Buffer Event Interval
+Requested Value: 800
+Buffer Size: 10000
+
+Task Name: Slave
+
+Status Code: -200877
+20/01/2021 02:58:39 PM | ERROR: Task name specified conflicts with an existing task name.
+Task Name: Master
+
+Status Code: -200089
+20/01/2021 02:59:20 PM | ERROR: Requested Every N Samples Event Interval is not supported for the given Data Transfer Mechanism and buffer size.
+
+To keep DMA or USB Bulk as the Data Transfer Mechanism, modify the buffer size and/or the Every N Samples Event Interval so the buffer size is an even multiple of the Every N Samples Event Interval. To keep the same Every N Samples Event Interval and buffer size, change the Data Transfer Mechanism to Interrupts if supported.
+Property: DAQmx_Every N Samples Acq Into Buffer Event Interval
+Requested Value: 800
+Buffer Size: 10000
+
+Task Name: Slave
+
+Status Code: -200877
+20/01/2021 02:59:50 PM | ERROR: Task name specified conflicts with an existing task name.
+Task Name: Master
+
+Status Code: -200089
+20/01/2021 03:05:28 PM | ERROR: Shape of passed values is (92, 1), indices imply (70, 1)
+20/01/2021 03:07:30 PM | ERROR: Shape of passed values is (114, 1), indices imply (70, 1)
+20/01/2021 03:08:24 PM | ERROR: Shape of passed values is (114, 1), indices imply (70, 1)
+20/01/2021 03:10:03 PM | ERROR: Shape of passed values is (115, 1), indices imply (70, 1)
+20/01/2021 03:44:55 PM | ERROR: Shape of passed values is (200, 1), indices imply (84, 1)
+25/01/2021 06:56:57 PM | ERROR: Shape of passed values is (269, 1), indices imply (80, 1)
+26/01/2021 02:47:58 PM | ERROR: Device cannot be accessed.  Possible causes:
+
+Device is no longer present in the system.
+Device is not powered.
+Device is powered, but was temporarily without power.
+Device and/or chassis driver support may have been removed.
+Device is damaged.
+
+Ensure the device is properly connected and turned on. Ensure the device and/or chassis is supported in the current version of the driver. Check the device's status in NI MAX. Turn the computer off and on again. If you suspect that the device is damaged, contact National Instruments at ni.com/support.
+Device Specified: Dev1
+
+Task Name: Master
+
+Status Code: -201003
+26/01/2021 02:48:52 PM | ERROR: Task name specified conflicts with an existing task name.
+Task Name: Master
+
+Status Code: -200089
+26/01/2021 02:50:12 PM | ERROR: Task name specified conflicts with an existing task name.
+Task Name: Master
+
+Status Code: -200089
+27/01/2021 11:01:31 AM | ERROR: Shape of passed values is (198, 1), indices imply (46, 1)
+27/01/2021 11:12:37 AM | ERROR: Shape of passed values is (131, 1), indices imply (68, 1)
+03/02/2021 10:00:10 AM | ERROR: index 3 is out of bounds for axis 0 with size 3
+04/02/2021 09:56:19 AM | ERROR: No module named 'nidaqmx'
+04/02/2021 10:14:30 AM | ERROR: No module named 'nidaqmx'
+04/02/2021 10:14:51 AM | ERROR: No module named 'nidaqmx'
+04/02/2021 10:15:49 AM | ERROR: No module named 'nidaqmx'
+04/02/2021 10:27:23 AM | ERROR: No module named 'nidaqmx'
+04/02/2021 10:28:41 AM | ERROR: No module named 'nidaqmx'
+04/02/2021 10:53:59 AM | ERROR: Device cannot be accessed.  Possible causes:
+Device is no longer present in the system.
+Device is not powered.
+Device is powered, but was temporarily without power.
+Device and/or chassis driver support may have been removed.
+Device is damaged.
+Ensure the device is properly connected and turned on. Ensure the device and/or chassis is supported in the current version of the driver. Check the device's status in NI MAX. Turn the computer off and on again. If you suspect that the device is damaged, contact National Instruments at ni.com/support.
+Device Specified: Dev1
+
+Task Name: Master
+
+Status Code: -201003
+04/02/2021 07:20:53 PM | ERROR: Shape of passed values is (13, 1), indices imply (12, 1)
+04/02/2021 07:44:28 PM | ERROR: [Errno 13] Permission denied: './data/datalogs.csv'
+04/02/2021 07:45:13 PM | ERROR: [Errno 13] Permission denied: './data/datalogs.csv'
+04/02/2021 07:46:30 PM | ERROR: [Errno 13] Permission denied: './data/datalogs.csv'
+09/03/2021 12:04:43 PM | ERROR: Device cannot be accessed.  Possible causes:
+Device is no longer present in the system.
+Device is not powered.
+Device is powered, but was temporarily without power.
+Device and/or chassis driver support may have been removed.
+Device is damaged.
+Ensure the device is properly connected and turned on. Ensure the device and/or chassis is supported in the current version of the driver. Check the device's status in NI MAX. Turn the computer off and on again. If you suspect that the device is damaged, contact National Instruments at ni.com/support.
+Device Specified: Dev1
+
+Task Name: Master
+
+Status Code: -201003
+09/03/2021 12:05:04 PM | ERROR: Task name specified conflicts with an existing task name.
+Task Name: Master
+
+Status Code: -200089
+09/03/2021 12:05:06 PM | ERROR: Task name specified conflicts with an existing task name.
+Task Name: Master
+
+Status Code: -200089
+07/09/2021 02:45:55 PM | ERROR: Device cannot be accessed.  Possible causes:
+Device is no longer present in the system.
+Device is not powered.
+Device is powered, but was temporarily without power.
+Device and/or chassis driver support may have been removed.
+Device is damaged.
+Ensure the device is properly connected and turned on. Ensure the device and/or chassis is supported in the current version of the driver. Check the device's status in NI MAX. Turn the computer off and on again. If you suspect that the device is damaged, contact National Instruments at ni.com/support.
+Device Specified: Dev1
+
+Task Name: Master
+
+Status Code: -201003
+07/09/2021 02:46:27 PM | ERROR: Task name specified conflicts with an existing task name.
+Task Name: Master
+
+Status Code: -200089
+07/09/2021 02:55:29 PM | ERROR: Shape of passed values is (56, 1), indices imply (55, 1)
+01/10/2021 11:42:56 AM | ERROR: Shape of passed values is (6, 1), indices imply (5, 1)
+15/10/2021 09:54:39 AM | ERROR: No module named 'nidaqmx'
+15/10/2021 09:54:44 AM | ERROR: No module named 'nidaqmx'
+15/10/2021 09:58:07 AM | ERROR: No module named 'matplotlib'
+15/10/2021 09:59:39 AM | ERROR: cannot import name 'tqdm' from 'tqdm' (unknown location)
+15/10/2021 10:00:35 AM | ERROR: module 'pandas' has no attribute 'DataFrame'
+30/03/2022 11:00:10 AM | ERROR: The specified resource is reserved. The operation could not be completed as specified.
+Task Name: Slave
+
+Status Code: -50103
+31/03/2022 09:57:20 AM | ERROR: Shape of passed values is (12, 1), indices imply (11, 1)
+31/03/2022 10:14:47 AM | ERROR: Shape of passed values is (27, 1), indices imply (26, 1)
+05/05/2022 09:36:32 AM | ERROR: Device cannot be accessed.  Possible causes:
+Device is no longer present in the system.
+Device is not powered.
+Device is powered, but was temporarily without power.
+Device and/or chassis driver support may have been removed.
+Device is damaged.
+Ensure the device is properly connected and turned on. Ensure the device and/or chassis is supported in the current version of the driver. Check the device's status in NI MAX. Turn the computer off and on again. If you suspect that the device is damaged, contact National Instruments at ni.com/support.
+Device Specified: Dev1
+
+Task Name: Master
+
+Status Code: -201003
+31/05/2022 04:08:42 PM | ERROR: Length of values (37) does not match length of index (36)
+31/05/2022 04:34:43 PM | ERROR: ADC conversion attempted before the prior conversion was complete.
+Increase the period between ADC conversions. If you are using an external clock, check your signal for the presence of noise or glitches.
+Task Name: Slave
+
+Status Code: -200019
+31/05/2022 04:34:48 PM | ERROR: Task name specified conflicts with an existing task name.
+Task Name: Master
+
+Status Code: -200089
+31/05/2022 04:34:51 PM | ERROR: Task name specified conflicts with an existing task name.
+Task Name: Master
+
+Status Code: -200089
+31/05/2022 04:35:04 PM | ERROR: Task name specified conflicts with an existing task name.
+Task Name: Master
+
+Status Code: -200089
+31/05/2022 04:36:10 PM | ERROR: ADC conversion attempted before the prior conversion was complete.
+Increase the period between ADC conversions. If you are using an external clock, check your signal for the presence of noise or glitches.
+Task Name: Slave
+
+Status Code: -200019
+31/05/2022 04:36:44 PM | ERROR: ADC conversion attempted before the prior conversion was complete.
+Increase the period between ADC conversions. If you are using an external clock, check your signal for the presence of noise or glitches.
+Task Name: Slave
+
+Status Code: -200019
+31/05/2022 04:36:51 PM | ERROR: Task name specified conflicts with an existing task name.
+Task Name: Master
+
+Status Code: -200089
+31/05/2022 04:38:04 PM | ERROR: Task name specified conflicts with an existing task name.
+Task Name: Master
+
+Status Code: -200089
+31/05/2022 04:38:16 PM | ERROR: ADC conversion attempted before the prior conversion was complete.
+Increase the period between ADC conversions. If you are using an external clock, check your signal for the presence of noise or glitches.
+Task Name: Slave
+
+Status Code: -200019
+31/05/2022 04:38:27 PM | ERROR: Task name specified conflicts with an existing task name.
+Task Name: Master
+
+Status Code: -200089
+31/05/2022 04:38:31 PM | ERROR: Task name specified conflicts with an existing task name.
+Task Name: Master
+
+Status Code: -200089
+31/05/2022 04:39:10 PM | ERROR: Task name specified conflicts with an existing task name.
+Task Name: Master
+
+Status Code: -200089
+31/05/2022 04:40:40 PM | ERROR: ADC conversion attempted before the prior conversion was complete.
+Increase the period between ADC conversions. If you are using an external clock, check your signal for the presence of noise or glitches.
+Task Name: Slave
+
+Status Code: -200019
+31/05/2022 04:40:43 PM | ERROR: Task name specified conflicts with an existing task name.
+Task Name: Master
+
+Status Code: -200089
+23/06/2022 11:00:17 AM | ERROR: ADC conversion attempted before the prior conversion was complete.
+Increase the period between ADC conversions. If you are using an external clock, check your signal for the presence of noise or glitches.
+Task Name: Slave
+
+Status Code: -200019
+23/06/2022 11:06:38 AM | ERROR: Task name specified conflicts with an existing task name.
+Task Name: Master
+
+Status Code: -200089
+23/06/2022 11:06:43 AM | ERROR: Task name specified conflicts with an existing task name.
+Task Name: Master
+
+Status Code: -200089
+24/06/2022 11:35:07 AM | ERROR: While reading from 'config.txt' [line 61]: option 'apd1 wavelength' in section 'Extra Parameters' already exists
+24/06/2022 11:35:33 AM | ERROR: While reading from 'config.txt' [line 61]: option 'apd1 wavelength' in section 'Extra Parameters' already exists
+24/06/2022 11:35:49 AM | ERROR: While reading from 'config.txt' [line 61]: option 'apd1 wavelength' in section 'Extra Parameters' already exists
+24/06/2022 11:35:58 AM | ERROR: While reading from 'config.txt' [line 61]: option 'apd1 wavelength' in section 'Extra Parameters' already exists
+24/06/2022 11:36:31 AM | ERROR: While reading from 'config.txt' [line 61]: option 'apd1 wavelength' in section 'Extra Parameters' already exists
+24/06/2022 11:37:06 AM | ERROR: While reading from 'config.txt' [line 61]: option 'apd1 wavelength' in section 'Extra Parameters' already exists
+24/06/2022 11:39:58 AM | ERROR: While reading from 'config.txt' [line 61]: option 'apd1 wavelength' in section 'Extra Parameters' already exists
+24/06/2022 11:40:30 AM | ERROR: While reading from 'config.txt' [line 61]: option 'apd1 wavelength' in section 'Extra Parameters' already exists
+24/06/2022 11:58:37 AM | ERROR: could not convert string to float: '0.1.678'
+24/06/2022 11:58:56 AM | ERROR: could not convert string to float: '0.1.678'
+29/06/2022 10:56:34 AM | ERROR: '%' must be followed by '%' or '(', found: '%'
+29/06/2022 10:58:42 AM | ERROR: '%' must be followed by '%' or '(', found: '%'
+29/06/2022 11:00:55 AM | ERROR: '%' must be followed by '%' or '(', found: '%'
+29/06/2022 11:02:10 AM | ERROR: '%' must be followed by '%' or '(', found: '%'
+29/06/2022 11:03:56 AM | ERROR: '%' must be followed by '%' or '(', found: '%'
+29/06/2022 11:13:31 AM | ERROR: '%' must be followed by '%' or '(', found: '%'
+04/08/2022 11:12:12 AM | ERROR: Device cannot be accessed.  Possible causes:
+Device is no longer present in the system.
+Device is not powered.
+Device is powered, but was temporarily without power.
+Device and/or chassis driver support may have been removed.
+Device is damaged.
+Ensure the device is properly connected and turned on. Ensure the device and/or chassis is supported in the current version of the driver. Check the device's status in NI MAX. Turn the computer off and on again. If you suspect that the device is damaged, contact National Instruments at ni.com/support.
+Device Specified: Dev1
+
+Task Name: Master
+
+Status Code: -201003
+04/08/2022 11:12:44 AM | ERROR: Task name specified conflicts with an existing task name.
+Task Name: Master
+
+Status Code: -200089
+17/08/2022 11:40:28 AM | ERROR: Device cannot be accessed.  Possible causes:
+Device is no longer present in the system.
+Device is not powered.
+Device is powered, but was temporarily without power.
+Device and/or chassis driver support may have been removed.
+Device is damaged.
+Ensure the device is properly connected and turned on. Ensure the device and/or chassis is supported in the current version of the driver. Check the device's status in NI MAX. Turn the computer off and on again. If you suspect that the device is damaged, contact National Instruments at ni.com/support.
+Device Specified: Dev1
+
+Task Name: Master
+
+Status Code: -201003
+17/08/2022 11:41:19 AM | ERROR: Task name specified conflicts with an existing task name.
+Task Name: Master
+
+Status Code: -200089
+18/08/2022 07:47:42 AM | ERROR: No module named 'nidaqmx'

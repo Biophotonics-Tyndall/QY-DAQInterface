@@ -4,17 +4,16 @@
 ##################################################################
 [Laser]
 # Output channel range (in volts)
-    # max end: 1.678 for L785nm and 5.4 for L976nm
+    # max end: 0.170 for L405nm, 1.678 for L785nm and 5.4 for L976nm
 start = 0
 end = 5.4
-step size = 0.08
+step size = 0.1
 reset = no
-
 ##################################################################
 [Timing]
 # Timing settings (in seconds)
-
-time per step = 0.1
+# 0.3 recomended
+time per step = 0.3
 
 ##################################################################
 [Sampling]
@@ -35,28 +34,34 @@ samples per channel per step = 1000
     # L: refers to laser driver
     # AOx: Analog Output x
     # AIx: Analog Input x
-    # PM: Power meter
-    # APD: APD
+    # PMR: Power meter for the reference cuvette
+    # PMS: Power meter for the sample cuvette
+    # APD-###: APD with the band pass filter ###
 
 AO0 = Laser
 AI0 = Trigger
-AI1 = PM
-AI2 = APD
-# AI3 = APDRaw
+AI1 = PMS
+AI2 = PMR
+AI3 = APD1
+AI4 = APD2
 
 ##################################################################
 [Extra Parameters]
 # Include more if needed. These values will be stored 
 # on the datalogs.csv file
 
-sample = s014
-APD gain = min
-density filter = 0
-sonication time = 5 mins
-power meter range = 600mW
+sample = sulfo_DBCO_amine_ucnps_batch1
+reference = empty
+sonication time = -
+pms range = 69mW
+pmr range = 61mW
+APD1 gain = max
+APD2 gain = max
+APD1 wavelength = 800nm
+APD2 wavelength = 472nm
+attenuation = 0
+spot size = s2
 laser wavelength = 976nm
-amplifier bandwidth = 100kHz
-amplifier gain = 20dB
 comments = -
 
 ##################################################################
@@ -67,11 +72,11 @@ comments = -
 
 graph size = 7,7
 font size = 12
-title = UCNP
+title = QY setup
 label = sample
-colour = orange
-alpha = 0.7
-marker = >
+colour = b
+alpha = 0.5
+marker = h
 marker size = 5
 line style = -.
 line width = 1
