@@ -7,6 +7,10 @@ import configparser
 import getpass
 import os
 import pandas as pd
+import matplotlib
+matplotlib.use('TkAgg')
+# matplotlib.use('Agg') # Not a GUI backend
+# matplotlib.use('Qt5Agg') # Need installation
 import matplotlib.pyplot as pl
 import numpy as np
 import time
@@ -14,10 +18,10 @@ from datetime import datetime
 from tqdm import tqdm
 import json
 
-
 class Controler():
     """
     """
+    debug = False
     _daqdata = pd.DataFrame()
     _clock = {}
     _data = pd.DataFrame()
@@ -33,6 +37,7 @@ class Controler():
     _RANGE_START = 0.0  # V
     _RANGE_END = 1.0  # V
     _STEP_SIZE = 0.1  # V
+    _STEP_RESET = False # resets the step to 0 before moving to next one
     _TIME_PER_STEP = 0.1  # s
 
     # DAQ uses this to calculate the buffer size
@@ -48,7 +53,6 @@ class Controler():
     _MAX_READING_VAL = 5.0
 
 
-
     def __init__(self):
         """Initialize data and clock variables
         """
@@ -59,18 +63,31 @@ class Controler():
 
         self._daqdata = pd.DataFrame({key: []
                                       for key in range(self._nChannels)})
+
         self._clock = {'time': []}
-
         self._log = self._createlog()
+        pl.close()
+        if self.debug:
+            fileName = './data/raw-data/qy_ddmmyy_hms.csv'
+            self._data = pd.read_csv(fileName, usecols=[1, 2, 3, 4])
+            self._data.columns = ['time', 0, 1, 2]
+            self._log.loc[0] = ['test'] * self._log.shape[1]
 
-        
+    def status(self):
+        """Returns message regarding data:
+            1. No data to be saved
+            2. Last measurement not saved
+        """
+        if self.isdatasaved():
+            return('No data to be saved...')
+        else: return('Data not saved...') 
 
     def _createlog(self):
         """ Creates dataframe to log the experimental details
         """
         return(pd.DataFrame(columns=[
             'exp_id', 'saved_name', 'out_ch', 'range_start', 'range_end', 'range_step_size',
-            'in_chs', 'time_per_step', 'samples_per_ch', 'sampling_rate',
+            'step_reset', 'in_chs', 'time_per_step', 'samples_per_ch', 'sampling_rate',
             'min_reading_val', 'max_reading_val', 'samples_per_ch_to_read',
             'extra_params', 'user', 'app_version'
         ]))
@@ -100,6 +117,7 @@ class Controler():
         self._RANGE_START = float(self._config['Laser']['start'])
         self._RANGE_END = float(self._config['Laser']['end'])
         self._STEP_SIZE = float(self._config['Laser']['step size'])
+        self._STEP_RESET = True if self._config['Laser']['reset'] == 'yes' else False
 
         # Set timing
         self._TIME_PER_STEP = float(self._config['Timing']['time per step'])
@@ -112,6 +130,10 @@ class Controler():
         self._MAX_READING_VAL = float(self._config['Sampling']['max voltage'])
 
         self._outputArr = np.arange(self._RANGE_START, self._RANGE_END, self._STEP_SIZE)
+        if self._STEP_RESET:
+            tempArr = np.delete(self._outputArr, np.where(self._outputArr==0))
+            self._outputArr = np.zeros(2 * tempArr.size)
+            self._outputArr[1::2] = tempArr
 
     def run(self):
         """Run method set to collect data at every N samples. 
@@ -180,7 +202,7 @@ class Controler():
                 taskSlave.stop()
                 pbar.close()
 
-            # dt = (t - t0) / 10 ** 6 # conver ns to ms
+            # dt = (t - t0) / 10 ** 6 # convert ns to ms
             # print(f'{number_of_samples} samples in {dt:.3f}', end='\r')
             return 0
 
@@ -327,7 +349,7 @@ class Controler():
         print('Done!')
 
     def data(self):
-        """Returns the consolidade data with time attached
+        """Returns the consolidate data with time attached
         """
         return(self._data)
 
@@ -346,6 +368,7 @@ class Controler():
         log['range_start'] = self._RANGE_START
         log['range_end'] = self._RANGE_END
         log['range_step_size'] = self._STEP_SIZE
+        log['step_reset'] = self._STEP_RESET
         # log['in_chs'] = ' '.join(self._IN_CHANNELS)
         log['in_chs'] = '/'.join([
             f"{ch}={self._config['Channels'][ch]}" for ch in self._IN_CHANNELS
@@ -381,7 +404,7 @@ class Controler():
 
             except FileNotFoundError:
                 print(f'Unable to find file: {logfilePath}...\n',
-                    "Relax, I'll try create it for you!"
+                    "Relax, I'll try to create it for you!"
                     )
                 self._log.to_csv(logfilePath, index=False)
 
@@ -410,29 +433,47 @@ class Controler():
                 print('Data already saved...')
         else: print('No data to save...')
 
+    def initializeplotgui(self):
+        """Initialize matplotlib figure and axes interface.
+        """
+        # Get configs dynamically without the need to run the experiment again
+        # in order to update the plot settings
+        dynamConfig = configparser.ConfigParser()
+        dynamConfig.read("config.txt")
+        gConfig = dynamConfig['Graph Settings']
+        pl.rcParams.update({'font.size': float(gConfig['font size'])})
+        # 1 subplot per channel
+        self._fig, self._axs = pl.subplots(self._nChannels, sharex=True,
+                                    figsize=[
+                                        float(i) for i in gConfig['graph size'].split(',')]
+                                    )
+        self._axs[-1].set_xlabel('Time (s)')
+
+        pl.ion()
+
     def plot(self):
         """
         Plots the data from channels vs time
         """
         
         if not self._data.empty:
-            # Get configs dynamically without the need to run the experiment again
-            # in order to update the plot settings
+            if pl.get_fignums() == []:
+                self.initializeplotgui()
             dynamConfig = configparser.ConfigParser()
             dynamConfig.read("config.txt")
             gConfig = dynamConfig['Graph Settings']
             cConfig = self._config['Channels']
-            pl.rcParams.update({'font.size': float(gConfig['font size'])})
-            # 1 subplot per channel
-            fig01, axs = pl.subplots(self._nChannels, sharex=True,
-                                     figsize=[
-                                         float(i) for i in gConfig['graph size'].split(',')]
-                                     )
+            extraPConfig = self._config['Extra Parameters']
 
-            pl.ion()
-
+            self._axs[0].set_title(gConfig['title'])
+            if self._axs[0].lines:
+                action = input('Overwrite data? [y or press enter]: ')
+                if action == 'y':
+                    for n in range(self._nChannels): 
+                        self._axs[n].lines = []
             for n in range(self._nChannels):
-                axs[n].plot(self._data['time'], self._data[n], label=gConfig['label'],
+                label = extraPConfig[gConfig['label']] if gConfig['label'] in extraPConfig else gConfig['label']
+                self._axs[n].plot(self._data['time'], self._data[n], label=label,
                             marker=gConfig['marker'],
                             ms=float(gConfig['marker size']),
                             color=gConfig['colour'],
@@ -440,15 +481,12 @@ class Controler():
                             linestyle=gConfig['line style'],
                             lw=float(gConfig['line width'])
                             )
-                axs[n].legend(title=f"Ch.{n}: {cConfig[self._IN_CHANNELS[n]]}")
-                axs[n].set_ylabel('Input (V)')
-                axs[n].grid(gConfig['grid'])
+                self._axs[n].legend(title=f"Ch.{n}: {cConfig[self._IN_CHANNELS[n]]}")
+                self._axs[n].set_ylabel('Input (V)')
+                self._axs[n].grid(gConfig['grid'])
 
-            axs[-1].set_xlabel('Time (s)')
-            axs[0].set_title(gConfig['title'])
-
-            fig01.tight_layout()
-            fig01.show()
+            self._fig.tight_layout()
+            self._fig.show()
             print('Data plotted...')
         else:
             print('No data to plot...')

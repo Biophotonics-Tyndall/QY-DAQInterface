@@ -1,20 +1,19 @@
 ##################################################################
 # Measurement config file
-# QyApp | v.1.0.1
+# QyApp | v.1.1.0
 ##################################################################
 [Laser]
 # Output channel range (in volts)
-
-# output channel
-start = 0.0
-end = 1.0
+    # max end: 0.170 for L405nm, 1.678 for L785nm and 5.4 for L976nm
+start = 0
+end = 5.4
 step size = 0.1
-
+reset = no
 ##################################################################
 [Timing]
 # Timing settings (in seconds)
-
-time per step = 0.1
+# 0.3 recomended
+time per step = 0.3
 
 ##################################################################
 [Sampling]
@@ -27,7 +26,7 @@ time per step = 0.1
 min voltage = 0.0
 max voltage = 10.0
 
-samples per channel per step = 100
+samples per channel per step = 1000
 
 ##################################################################
 [Channels]
@@ -35,38 +34,51 @@ samples per channel per step = 100
     # L: refers to laser driver
     # AOx: Analog Output x
     # AIx: Analog Input x
-    # PM: Power meter
-    # APD: APD
+    # PMR: Power meter for the reference cuvette
+    # PMS: Power meter for the sample cuvette
+    # APD-###: APD with the band pass filter ###
 
 AO0 = Laser
-AI0 = AO0
-AI1 = PM
-AI2 = APD
+AI0 = Trigger
+AI1 = PMS
+AI2 = PMR
+AI3 = APD1
+AI4 = APD2
 
 ##################################################################
 [Extra Parameters]
-# Include more if needed. These values will be recorded 
+# Include more if needed. These values will be stored 
 # on the datalogs.csv file
 
-sample = s000
-APD gain = min
-density filter = ND1
+sample = sulfo_DBCO_amine_ucnps_batch1
+reference = empty
+sonication time = -
+pms range = 69mW
+pmr range = 61mW
+APD1 gain = max
+APD2 gain = max
+APD1 wavelength = 800nm
+APD2 wavelength = 472nm
+attenuation = 0
+spot size = s2
+laser wavelength = 976nm
 comments = -
 
 ##################################################################
 [Graph Settings]
 # Change matplotlib graph preferences
 # Color names: https://htmlcolorcodes.com/color-names/
+# New! Label can be set as a key word from Extra Parameters
 
-graph size = 7,8
-font size = 18
-title = UCNPS dynamics
-label = run 01
-colour = orangered
-alpha = 0.7
-marker = o
-marker size = 2
-line style = -
+graph size = 7,7
+font size = 12
+title = QY setup
+label = sample
+colour = b
+alpha = 0.5
+marker = h
+marker size = 5
+line style = -.
 line width = 1
 grid = on
 
