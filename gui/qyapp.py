@@ -4,7 +4,7 @@ from PyQt5.QtGui import *
 from PyQt5.QtWidgets import *
 import sys
 from components.settings import SettingsForm
-from components.chart import MplCanvas, ChartBox
+from components.chart import PanelWidget
 
 
 class Window(QMainWindow):
@@ -16,13 +16,16 @@ class Window(QMainWindow):
         self.setGeometry(100, 100, 1200, 800)
 
         settingsForm = SettingsForm()
-        chartBox = ChartBox()
-        settingsForm.plot = chartBox.plot
+        # chartBox = ChartBox()
+        panel = PanelWidget(parent=self)
+        settingsForm.plot = panel.plot
+        # settingsForm.plot = chartBox.plot
         layout = QHBoxLayout()
 
         layout.addWidget(settingsForm, 30)
 
-        layout.addWidget(chartBox, 70)
+        layout.addWidget(panel, 70)
+        # layout.addWidget(chartBox, 70)
         # layout.addWidget(QPushButton('Save'), 70)
 
         widget = QWidget()

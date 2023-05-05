@@ -2,9 +2,8 @@
 from PyQt5.QtWidgets import *
 from PyQt5.QtCore import Qt
 import sys
-
-# creating a class
-# that inherits the QDialog class
+import numpy as np
+from backend.daq import Controler
 
 
 class SettingsForm(QDialog):
@@ -13,6 +12,7 @@ class SettingsForm(QDialog):
     def __init__(self):
         super(SettingsForm, self).__init__()
 
+        self.initializeDaqController()
         # creating a group box
         self.formGroupBox = QGroupBox("Experiment settings")
 
@@ -40,6 +40,8 @@ class SettingsForm(QDialog):
         self.powerMeterSChannelComboBox = QComboBox()
         self.powerMeterSChannelComboBox.addItems(inputChannels)
         self.powerMeterSChannelComboBox.setCurrentText('AI1')
+        self.powerMeterSChannelComboBox.currentTextChanged.connect(
+            self.setOnChangePowerMeterS)
 
         # PMS range
         self.powerMeterSRangeComboBox = QComboBox()
@@ -50,6 +52,8 @@ class SettingsForm(QDialog):
         self.powerMeterRChannelComboBox = QComboBox()
         self.powerMeterRChannelComboBox.addItems(inputChannels)
         self.powerMeterRChannelComboBox.setCurrentText('AI2')
+        self.powerMeterRChannelComboBox.currentTextChanged.connect(
+            self.setOnChangePowerMeterR)
 
         # PMS range
         self.powerMeterRRangeComboBox = QComboBox()
@@ -60,6 +64,8 @@ class SettingsForm(QDialog):
         self.apd1ChannelComboBox = QComboBox()
         self.apd1ChannelComboBox.addItems(inputChannels)
         self.apd1ChannelComboBox.setCurrentText('AI3')
+        self.apd1ChannelComboBox.currentTextChanged.connect(
+            self.setOnChangeAPD1)
 
         # Gain combo box
         self.apd1GainComboBox = QComboBox()
@@ -74,6 +80,8 @@ class SettingsForm(QDialog):
         self.apd2ChannelComboBox = QComboBox()
         self.apd2ChannelComboBox.addItems(inputChannels)
         self.apd2ChannelComboBox.setCurrentText('AI4')
+        self.apd2ChannelComboBox.currentTextChanged.connect(
+            self.setOnChangeAPD2)
 
         # Gain combo box
         self.apd2GainComboBox = QComboBox()
@@ -88,6 +96,8 @@ class SettingsForm(QDialog):
         self.feedbackChannelComboBox = QComboBox()
         self.feedbackChannelComboBox.addItems(inputChannels)
         self.feedbackChannelComboBox.setCurrentText('AI0')
+        self.feedbackChannelComboBox.currentTextChanged.connect(
+            self.setOnChangeFeedback)
 
         # Starting point: creating spin box
         self.laserStartSpinBar = QDoubleSpinBox()
@@ -144,12 +154,17 @@ class SettingsForm(QDialog):
         self.createForm()
 
         # creating a dialog button for ok and cancel
-        runButton = QPushButton("Run")
+        self.runButton = QPushButton("Run")
+        self.runButton.clicked.connect(self.getInfo)
+        self.saveButton = QPushButton("Save")
+        self.saveButton.clicked.connect(self.save)
+        self.saveButton.setEnabled(False)
         self.buttonBox = QDialogButtonBox()
-        self.buttonBox.addButton(runButton, QDialogButtonBox.AcceptRole)
+        self.buttonBox.addButton(self.runButton, QDialogButtonBox.AcceptRole)
+        self.buttonBox.addButton(self.saveButton, QDialogButtonBox.AcceptRole)
 
         # adding action when form is accepted
-        self.buttonBox.accepted.connect(self.getInfo)
+        # self.buttonBox.accepted.connect(self.getInfo)
 
         # Creating a scroll area and put all the elements inside
         self.scroll = QScrollArea()
@@ -168,6 +183,68 @@ class SettingsForm(QDialog):
 
         # setting lay out
         self.setLayout(mainLayout)
+
+    def initializeDaqController(self):
+        self.daq = Controler()
+
+    def save(self):
+        self.daq.savelog()
+        self.saveButton.setEnabled(False)
+
+    def setOnChangeFeedback(self, value):
+        devices = [
+            self.powerMeterSChannelComboBox,
+            self.powerMeterRChannelComboBox,
+            self.apd1ChannelComboBox,
+            self.apd2ChannelComboBox
+        ]
+        for device in devices:
+            if device.currentText() == value:
+                device.setCurrentText('None')
+
+    def setOnChangePowerMeterS(self, value):
+        devices = [
+            self.feedbackChannelComboBox,
+            self.powerMeterRChannelComboBox,
+            self.apd1ChannelComboBox,
+            self.apd2ChannelComboBox
+        ]
+        for device in devices:
+            if device.currentText() == value:
+                device.setCurrentText('None')
+
+    def setOnChangePowerMeterR(self, value):
+        devices = [
+            self.feedbackChannelComboBox,
+            self.powerMeterSChannelComboBox,
+            self.apd1ChannelComboBox,
+            self.apd2ChannelComboBox
+        ]
+        for device in devices:
+            if device.currentText() == value:
+                device.setCurrentText('None')
+
+    def setOnChangeAPD1(self, value):
+        devices = [
+            self.feedbackChannelComboBox,
+            self.powerMeterRChannelComboBox,
+            self.powerMeterSChannelComboBox,
+            self.apd2ChannelComboBox
+        ]
+        for device in devices:
+            if device.currentText() == value:
+                device.setCurrentText('None')
+
+    def setOnChangeAPD2(self, value):
+        devices = [
+            self.feedbackChannelComboBox,
+            self.powerMeterRChannelComboBox,
+            self.powerMeterSChannelComboBox,
+            self.apd1ChannelComboBox
+        ]
+        for device in devices:
+            if device.currentText() == value:
+                device.setCurrentText('None')
 
     # On change the laser line
     def setOnChangeLaserLine(self, value):
@@ -188,6 +265,69 @@ class SettingsForm(QDialog):
         self.laserEndSpinBar.setValue(maxVoltage)
         self.laserStepSpinBar.setMaximum(maxVoltage)
         self.laserStepSpinBar.setValue(step)
+
+    def setDaqConfig(self):
+        # Set channels
+        channels = [
+            self.laserChannelComboBox.currentText(),
+            self.feedbackChannelComboBox.currentText(),
+            self.powerMeterSChannelComboBox.currentText(),
+            self.powerMeterRChannelComboBox.currentText(),
+            self.apd1ChannelComboBox.currentText(),
+            self.apd2ChannelComboBox.currentText()
+        ]
+        self.daq._OUT_CHANNEL = [ch.lower()
+                                 for ch in channels if 'o' in ch.lower()]
+
+        self.daq._IN_CHANNELS = sorted(
+            [ch.lower() for ch in channels if 'i' in ch.lower()])
+
+        self.daq._config = {'Channels': {
+            self.laserChannelComboBox.currentText().lower(): 'laser',
+            self.feedbackChannelComboBox.currentText().lower(): 'trigger',
+            self.powerMeterSChannelComboBox.currentText().lower(): 'pms',
+            self.powerMeterRChannelComboBox.currentText().lower(): 'pmr',
+            self.apd1ChannelComboBox.currentText().lower(): 'apd1',
+            self.apd2ChannelComboBox.currentText().lower(): 'apd2'
+        }}
+
+        self.daq._nChannels = len(self.daq._IN_CHANNELS)
+
+        # Set power range
+        self.daq._RANGE_START = float(self.laserStartSpinBar.text())
+        self.daq._RANGE_END = float(self.laserEndSpinBar.text())
+        self.daq._STEP_SIZE = float(self.laserStepSpinBar.text())
+        self.daq._STEP_RESET = self.pulsedCheckBox.isChecked()
+
+        # Set timing
+        self.daq._TIME_PER_STEP = float(self.timingSpinBar.text())
+
+        # Set sampling
+        self.daq._INTERNAL_SAMPLES_PER_CH = int(self.samplingSpinBar.text())
+        self.daq._SAMPLING_RATE = self.daq._INTERNAL_SAMPLES_PER_CH / self.daq._TIME_PER_STEP
+        self.daq._MIN_READING_VAL = 0.0
+        self.daq._MAX_READING_VAL = 10.0
+
+        self.daq._SAMPLE = self.sampleLineEdit.text()
+        self.daq._REFERENCE = self.referenceLineEdit.text()
+        self.daq._EXCITATION_WAVELENGTH = self.laserLineComboBox.currentText()
+        self.daq._BEAM_SPOT = self.beamSpotComboBox.currentText()
+        self.daq._SAMPLE_POWER_METER_RANGE = self.powerMeterSRangeComboBox.currentText()
+        self.daq._REFERENCE_POWER_METER_RANGE = self.powerMeterRRangeComboBox.currentText()
+        self.daq._APD1_GAIN = self.apd1GainComboBox.currentText()
+        self.daq._APD1_DETECTION_WAVELENGTH = self.apd1DetectionWavelengthSpinBox.text()
+        self.daq._APD2_GAIN = self.apd2GainComboBox.currentText()
+        self.daq._APD2_DETECTION_WAVELENGTH = self.apd2DetectionWavelengthSpinBox.text()
+
+        self.daq._NOTES = self.notesTextBox.toPlainText().replace(' ', '').replace('\n', '/')
+
+        self.daq._outputArr = np.arange(
+            self.daq._RANGE_START, self.daq._RANGE_END, self.daq._STEP_SIZE)
+        if self.daq._STEP_RESET:
+            tempArr = np.delete(self.daq._outputArr,
+                                np.where(self.daq._outputArr == 0))
+            self.daq._outputArr = np.zeros(2 * tempArr.size)
+            self.daq._outputArr[1::2] = tempArr
 
     # get info method called when form is accepted
     def getInfo(self):
@@ -217,9 +357,14 @@ class SettingsForm(QDialog):
         print(f"{self.referenceLineEdit.text()=}")
         print(f"{self.notesTextBox.toPlainText()=}")
 
-        self.plot()
+        self.setDaqConfig()
+        self.daq.run()
+        self.saveButton.setEnabled(True)
+        self.daq.updatelog()
+        # n = 2 if self.pulsedCheckBox.isChecked() else 5
+        self.plot(self.daq)
 
-    def plot(self):
+    def plot(self, daq):
         pass
 
     # create form method
@@ -292,17 +437,17 @@ class SettingsForm(QDialog):
         self.formGroupBox.setLayout(layout)
 
 
-# main method
-if __name__ == '__main__':
+# # main method
+# if __name__ == '__main__':
 
-    # create pyqt5 app
-    app = QApplication(sys.argv)
+#     # create pyqt5 app
+#     app = QApplication(sys.argv)
 
-    # create the instance of our Window
-    window = SettingsForm()
+#     # create the instance of our Window
+#     window = SettingsForm()
 
-    # showing the window
-    window.show()
+#     # showing the window
+#     window.show()
 
-    # start the app
-    sys.exit(app.exec())
+#     # start the app
+#     sys.exit(app.exec())
