@@ -41,18 +41,6 @@ class PanelWidget(QWidget):
         self.axs[-1].set_xlabel('Time (s)')
         self.fig.tight_layout()
 
-    # def resetLayout_(self):
-    #     self.layout.removeWidget(self.scroll)
-    #     self.layout.removeWidget(self.toolbar)
-    #     self.scroll = QScrollArea(self)
-    #     if self.nAxes < 3:
-    #         self.scroll.setWidgetResizable(True)
-    #     self.scroll.setWidget(self.canvas)
-
-    #     self.layout.addWidget(self.scroll)
-    #     self.toolbar = NavigationToolbar2QT(self.canvas, self)
-    #     self.layout.addWidget(self.toolbar)
-
     def plot(self, daq):
 
         if not daq._data.empty:

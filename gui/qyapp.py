@@ -31,7 +31,8 @@ class Window(QMainWindow):
         widget = QWidget()
         widget.setLayout(layout)
         self.setCentralWidget(widget)
-
+        self.statusBar()
+        self.statusBar().addPermanentWidget(settingsForm.progress)
         # show all the widgets
         self.show()
 

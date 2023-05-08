@@ -162,6 +162,18 @@ class Controler():
             self._outputArr = np.zeros(2 * tempArr.size)
             self._outputArr[1::2] = tempArr
 
+    def updateProgress(self, value):
+        pass
+
+    def runTest(self):
+        runningProgress = 0
+        while runningProgress < 100:
+            runningProgress += 100 / len(self._outputArr)
+            time.sleep(0.1)
+            self.updateProgress(runningProgress)
+        runningProgress = 100.0
+        self.updateProgress(runningProgress)
+
     def run(self):
         """Run method set to collect data at every N samples. 
         Time column gives the time when the samples were collected and 

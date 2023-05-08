@@ -13,6 +13,9 @@ class SettingsForm(QDialog):
         super(SettingsForm, self).__init__()
 
         self.initializeDaqController()
+
+        self.progress = QProgressBar(self)
+        self.progress.hide()
         # creating a group box
         self.formGroupBox = QGroupBox("Experiment settings")
 
@@ -133,7 +136,7 @@ class SettingsForm(QDialog):
         self.timingSpinBar.setDecimals(1)
         self.timingSpinBar.setValue(0.3)
         self.timingSpinBar.setToolTip(
-            'It refers to the time taken to acquire the N samples per step')
+            'It refers to the time taken to acquire the number of samples per step set above')
 
         # Pulsed: creating a check box
         self.pulsedCheckBox = QCheckBox()
@@ -188,7 +191,7 @@ class SettingsForm(QDialog):
         self.daq = Controler()
 
     def save(self):
-        self.daq.savelog()
+        self.daq.save()
         self.saveButton.setEnabled(False)
 
     def setOnChangeFeedback(self, value):
@@ -328,40 +331,53 @@ class SettingsForm(QDialog):
             self.daq._outputArr = np.zeros(2 * tempArr.size)
             self.daq._outputArr[1::2] = tempArr
 
+    def updateProgress(self, value):
+        self.progress.setValue(round(value))
+
     # get info method called when form is accepted
     def getInfo(self):
 
         # printing the form information
-        print(f"{self.laserChannelComboBox.currentText()=}")
-        print(f"{self.laserLineComboBox.currentText()=}")
-        print(f"{self.beamSpotComboBox.currentText()=}")
-        print(f"{self.powerMeterSChannelComboBox.currentText()=}")
-        print(f"{self.powerMeterSRangeComboBox.currentText()=}")
-        print(f"{self.powerMeterRChannelComboBox.currentText()=}")
-        print(f"{self.powerMeterRRangeComboBox.currentText()=}")
-        print(f"{self.apd1ChannelComboBox.currentText()=}")
-        print(f"{self.apd1GainComboBox.currentText()=}")
-        print(f"{self.apd1DetectionWavelengthSpinBox.text()=}")
-        print(f"{self.apd2ChannelComboBox.currentText()=}")
-        print(f"{self.apd2GainComboBox.currentText()=}")
-        print(f"{self.apd2DetectionWavelengthSpinBox.text()=}")
-        print(f"{self.feedbackChannelComboBox.currentText()=}")
-        print(f"{self.laserStartSpinBar.text()=}")
-        print(f"{self.laserEndSpinBar.text()=}")
-        print(f"{self.laserStepSpinBar.text()=}")
-        print(f"{self.samplingSpinBar.text()=}")
-        print(f"{self.timingSpinBar.text()=}")
-        print(f"{self.pulsedCheckBox.isChecked()=}")
-        print(f"{self.sampleLineEdit.text()=}")
-        print(f"{self.referenceLineEdit.text()=}")
-        print(f"{self.notesTextBox.toPlainText()=}")
+        # print(f"{self.laserChannelComboBox.currentText()=}")
+        # print(f"{self.laserLineComboBox.currentText()=}")
+        # print(f"{self.beamSpotComboBox.currentText()=}")
+        # print(f"{self.powerMeterSChannelComboBox.currentText()=}")
+        # print(f"{self.powerMeterSRangeComboBox.currentText()=}")
+        # print(f"{self.powerMeterRChannelComboBox.currentText()=}")
+        # print(f"{self.powerMeterRRangeComboBox.currentText()=}")
+        # print(f"{self.apd1ChannelComboBox.currentText()=}")
+        # print(f"{self.apd1GainComboBox.currentText()=}")
+        # print(f"{self.apd1DetectionWavelengthSpinBox.text()=}")
+        # print(f"{self.apd2ChannelComboBox.currentText()=}")
+        # print(f"{self.apd2GainComboBox.currentText()=}")
+        # print(f"{self.apd2DetectionWavelengthSpinBox.text()=}")
+        # print(f"{self.feedbackChannelComboBox.currentText()=}")
+        # print(f"{self.laserStartSpinBar.text()=}")
+        # print(f"{self.laserEndSpinBar.text()=}")
+        # print(f"{self.laserStepSpinBar.text()=}")
+        # print(f"{self.samplingSpinBar.text()=}")
+        # print(f"{self.timingSpinBar.text()=}")
+        # print(f"{self.pulsedCheckBox.isChecked()=}")
+        # print(f"{self.sampleLineEdit.text()=}")
+        # print(f"{self.referenceLineEdit.text()=}")
+        # print(f"{self.notesTextBox.toPlainText()=}")
 
+        if not self.daq.isdatasaved():
+            reply = QMessageBox.question(self, 'Save data', 'Do you want to save the last acquired data before continuing?\nAfter running a new experiment the data will be erased.',
+                                         QMessageBox.Yes | QMessageBox.No, QMessageBox.No)
+            if reply == QMessageBox.Yes:
+                self.save()
+            else:
+                pass
+        self.progress.show()
         self.setDaqConfig()
-        # self.daq.run()
-        self.saveButton.setEnabled(True)
+        self.daq.updateProgress = self.updateProgress
+        self.daq.runTest()
         self.daq.updatelog()
-        # n = 2 if self.pulsedCheckBox.isChecked() else 5
+        if not self.daq.isdatasaved():
+            self.saveButton.setEnabled(True)
         self.plot(self.daq)
+        self.progress.hide()
 
     def plot(self, daq):
         pass
@@ -434,19 +450,3 @@ class SettingsForm(QDialog):
         layout.addRow(QLabel("Notes"), self.notesTextBox)
 
         self.formGroupBox.setLayout(layout)
-
-
-# # main method
-# if __name__ == '__main__':
-
-#     # create pyqt5 app
-#     app = QApplication(sys.argv)
-
-#     # create the instance of our Window
-#     window = SettingsForm()
-
-#     # showing the window
-#     window.show()
-
-#     # start the app
-#     sys.exit(app.exec())
