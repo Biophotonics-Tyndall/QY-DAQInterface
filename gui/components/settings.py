@@ -249,16 +249,15 @@ class SettingsForm(QDialog):
     # On change the laser line
     def setOnChangeLaserLine(self, value):
 
-        match value:
-            case "405 nm":
-                maxVoltage = 0.170
-                step = 0.002
-            case "785 nm":
-                maxVoltage = 1.678
-                step = 0.01
-            case "976 nm":
-                maxVoltage = 5.400
-                step = 0.1
+        if value == "405 nm":
+            maxVoltage = 0.170
+            step = 0.002
+        elif value == "785 nm":
+            maxVoltage = 1.678
+            step = 0.01
+        elif value == "976 nm":
+            maxVoltage = 5.400
+            step = 0.1
 
         self.laserStartSpinBar.setRange(0, maxVoltage)
         self.laserEndSpinBar.setMaximum(maxVoltage)
@@ -358,7 +357,7 @@ class SettingsForm(QDialog):
         print(f"{self.notesTextBox.toPlainText()=}")
 
         self.setDaqConfig()
-        self.daq.run()
+        # self.daq.run()
         self.saveButton.setEnabled(True)
         self.daq.updatelog()
         # n = 2 if self.pulsedCheckBox.isChecked() else 5
