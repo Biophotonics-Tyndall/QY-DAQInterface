@@ -219,6 +219,8 @@ class Controler():
             samps_per_chan=self._INTERNAL_SAMPLES_PER_CH  # buffer size
         )
 
+        self.runningProgress = 0
+        self.updateProgress(self.runningProgress)
         def callback(task_handle, every_n_samples_event_type,
                      number_of_samples, callback_data):
 
@@ -232,14 +234,17 @@ class Controler():
                         number_of_samples_per_channel=number_of_samples)
                 ).T
             ])
-            pbar.update(number_of_samples)
+            self.runningProgress += 100 / len(self._outputArr)
+            self.updateProgress(self.runningProgress)
+                        
             # write next value to output if it is within the range
             if self._outputArr.any():
                 taskMaster.write([self._outputArr[0]])
                 self._outputArr = np.delete(self._outputArr, 0)
             else:
+                print('Stop')
                 taskSlave.stop()
-                pbar.close()
+
 
             # dt = (t - t0) / 10 ** 6 # convert ns to ms
             # print(f'{number_of_samples} samples in {dt:.3f}', end='\r')
@@ -250,20 +255,18 @@ class Controler():
         taskSlave.register_every_n_samples_acquired_into_buffer_event(
             self._INTERNAL_SAMPLES_PER_CH, callback)
 
-        # define progress bar
-        pbar = tqdm(
-            total=len(self._outputArr) * self._INTERNAL_SAMPLES_PER_CH,
-            desc='Acquiring', unit='samples', position=0,
-        )
-
         taskMaster.write([self._outputArr[0]])
         self._outputArr = np.delete(self._outputArr, 0)
         t0 = time.time_ns()  # acquire initial t in ns
         taskSlave.start()
 
-        os.system('cls' if os.name == 'nt' else 'clear')
-        input('Task running... Press ENTER to stop.\n')
-
+        # taskMaster.wait_until_done()
+        # self.wait()
+        while self.runningProgress < 100:
+            # wait until it's done
+            # allow the daq to process the routine before it moves to next step 
+            time.sleep(0.001)
+            
         taskSlave.stop()
         taskSlave.close()
 
@@ -293,6 +296,9 @@ class Controler():
 
         # include details to log
         self.updatelog()
+
+        self.runningProgress = 100.0
+        self.updateProgress(self.runningProgress)
 
         print('Done!')
 
