@@ -5,6 +5,7 @@ import time
 import numpy as np
 import matplotlib.pyplot as pl
 import nidaqmx as mx
+import nidaqmx.system
 from nidaqmx.constants import (
     AcquisitionType,
     READ_ALL_AVAILABLE
@@ -91,6 +92,15 @@ class Controler():
             self._data = pd.read_csv(fileName, usecols=[1, 2, 3, 4])
             self._data.columns = ['time', 0, 1, 2]
             self._log.loc[0] = ['test'] * self._log.shape[1]
+
+        system = nidaqmx.system.System.local()
+        try:
+            self.devices = list(system.devices)
+            for dev in self.devices:
+                print(dev)
+        except:
+            self.devices = []
+            print('No device found...')
 
     def status(self):
         """Returns message regarding data:

@@ -159,6 +159,7 @@ class SettingsForm(QDialog):
         # creating a dialog button for ok and cancel
         self.runButton = QPushButton("Run")
         self.runButton.clicked.connect(self.getInfo)
+        self.runButton.setEnabled(bool(self.daq.devices))
         self.saveButton = QPushButton("Save")
         self.saveButton.clicked.connect(self.save)
         self.saveButton.setEnabled(False)
@@ -186,6 +187,15 @@ class SettingsForm(QDialog):
 
         # setting lay out
         self.setLayout(mainLayout)
+
+    def closeEvent(self, event):
+        # Not working
+        print('Esc pressed')
+
+        if event.key() in (Qt.Key_Return,
+                           Qt.Key_Escape,
+                           Qt.Key_Enter,):
+            event.ignore()
 
     def initializeDaqController(self):
         self.daq = Controler()

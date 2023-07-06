@@ -15,14 +15,14 @@ class Window(QMainWindow):
         self.setWindowTitle("QY Controller")
         self.setGeometry(100, 100, 1200, 800)
 
-        settingsForm = SettingsForm()
+        self.settingsForm = SettingsForm()
         # chartBox = ChartBox()
         panel = PanelWidget(parent=self)
-        settingsForm.plot = panel.plot
-        # settingsForm.plot = chartBox.plot
+        self.settingsForm.plot = panel.plot
+        # self.settingsForm.plot = chartBox.plot
         layout = QHBoxLayout()
 
-        layout.addWidget(settingsForm, 30)
+        layout.addWidget(self.settingsForm, 30)
 
         layout.addWidget(panel, 70)
         # layout.addWidget(chartBox, 70)
@@ -32,9 +32,23 @@ class Window(QMainWindow):
         widget.setLayout(layout)
         self.setCentralWidget(widget)
         self.statusBar()
-        self.statusBar().addPermanentWidget(settingsForm.progress)
+        self.statusBar().addPermanentWidget(self.settingsForm.progress)
+        status = 'Ready' if self.settingsForm.daq.devices else 'DAQ not found...'
+        timeout = 3000 if self.settingsForm.daq.devices else 0
+        self.statusBar().showMessage(status, msecs=timeout)
         # show all the widgets
         self.show()
+
+    def eventFilter(self, obj, event):
+        # Attempt to prevent the form to close on ESC button pressed (didn't work)
+        print('Esc pressed 0')
+        if obj is self.settingsForm and event.type() == QEvent.KeyPress:
+
+            if event.key() in (Qt.Key_Return,
+                               Qt.Key_Escape,
+                               Qt.Key_Enter,):
+                return True
+        return super(Window, self).eventFilter(obj, event)
 
 
 # main method
