@@ -347,6 +347,7 @@ class SettingsForm(QDialog):
     # get info method called when form is accepted
     def getInfo(self):
 
+        self.runButton.setEnabled(False)
         # printing the form information
         # print(f"{self.laserChannelComboBox.currentText()=}")
         # print(f"{self.laserLineComboBox.currentText()=}")
@@ -382,12 +383,15 @@ class SettingsForm(QDialog):
         self.progress.show()
         self.setDaqConfig()
         self.daq.updateProgress = self.updateProgress
-        self.daq.runTest()
+        # self.daq.runTest()
+        self.daq.run()
         self.daq.updatelog()
         if not self.daq.isdatasaved():
             self.saveButton.setEnabled(True)
         self.plot(self.daq)
         self.progress.hide()
+        self.runButton.setEnabled(True)
+
 
     def plot(self, daq):
         pass

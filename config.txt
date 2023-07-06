@@ -6,8 +6,8 @@
 # Output channel range (in volts)
     # max end: 0.170 for L405nm, 1.678 for L785nm and 5.4 for L976nm
 start = 0
-end = 5.4
-step size = 0.1
+end = 1.678
+step size = 0.02
 reset = no
 ##################################################################
 [Timing]
@@ -50,7 +50,7 @@ AI4 = APD2
 # Include more if needed. These values will be stored 
 # on the datalogs.csv file
 
-sample = sulfo_DBCO_amine_ucnps_batch1
+sample = test
 reference = empty
 sonication time = -
 pms range = 69mW
