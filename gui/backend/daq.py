@@ -1,32 +1,25 @@
 import json
-from tqdm import tqdm
 from datetime import datetime
 import time
 import numpy as np
-import matplotlib.pyplot as pl
 import nidaqmx as mx
 import nidaqmx.system
 from nidaqmx.constants import (
     AcquisitionType,
     READ_ALL_AVAILABLE
 )
-import configparser
 import getpass
-import os
 import pandas as pd
-import matplotlib
-matplotlib.use('TkAgg')
-# matplotlib.use('Agg') # Not a GUI backend
-# matplotlib.use('Qt5Agg') # Need installation
+# import matplotlib
+# matplotlib.use('TkAgg')
 
 
-class Controler():
+class Controller():
     """
     """
-    debug = False
+    debug = True
     _daqdata = pd.DataFrame()
     _clock = {}
-    # _data = pd.DataFrame()
     _data = pd.DataFrame({
         'time': [0, 1, 2, 3, 4, 5],
         0: [0, 1, 2, 3, 4, 5],
@@ -86,12 +79,7 @@ class Controler():
 
         self._clock = {'time': []}
         self._log = self._createlog()
-        pl.close()
-        if self.debug:
-            fileName = '../data/raw-data/qy_ddmmyy_hms.csv'
-            self._data = pd.read_csv(fileName, usecols=[1, 2, 3, 4])
-            self._data.columns = ['time', 0, 1, 2]
-            self._log.loc[0] = ['test'] * self._log.shape[1]
+        # pl.close()
 
         system = nidaqmx.system.System.local()
         try:
@@ -102,15 +90,9 @@ class Controler():
             self.devices = []
             print('No device found...')
 
-    def status(self):
-        """Returns message regarding data:
-            1. No data to be saved
-            2. Last measurement not saved
-        """
-        if self.isdatasaved():
-            return ('No data to be saved...')
-        else:
-            return ('Data not saved...')
+        if self.debug:
+            self.devices = ['dev1']
+            self.run = self.runTest
 
     def _createlog(self):
         """ Creates dataframe to log the experimental details
@@ -132,45 +114,6 @@ class Controler():
         If log is empty means that the data was already saved and log was cleaned up.
         """
         return (self._log.empty)
-
-    def _xpconfig(self):
-        """
-        _get_xpconfig()
-        Gets and sets experiment parameters from external .txt file.
-        """
-        self._config = configparser.ConfigParser()
-        self._config.read("config.txt")
-
-        # Set channels
-        self._OUT_CHANNEL = [ch.strip().replace(' ', '')
-                             for ch in list(self._config['Channels']) if ch[1] == 'o']
-        self._IN_CHANNELS = sorted([ch.strip().replace(
-            ' ', '') for ch in list(self._config['Channels']) if ch[1] == 'i'])
-        self._nChannels = len(self._IN_CHANNELS)
-
-        # Set power range
-        self._RANGE_START = float(self._config['Laser']['start'])
-        self._RANGE_END = float(self._config['Laser']['end'])
-        self._STEP_SIZE = float(self._config['Laser']['step size'])
-        self._STEP_RESET = True if self._config['Laser']['reset'] == 'yes' else False
-
-        # Set timing
-        self._TIME_PER_STEP = float(self._config['Timing']['time per step'])
-
-        # Set sampling
-        self._INTERNAL_SAMPLES_PER_CH = int(
-            self._config['Sampling']['samples per channel per step'])
-        self._SAMPLING_RATE = self._INTERNAL_SAMPLES_PER_CH / self._TIME_PER_STEP
-        self._MIN_READING_VAL = float(self._config['Sampling']['min voltage'])
-        self._MAX_READING_VAL = float(self._config['Sampling']['max voltage'])
-
-        self._outputArr = np.arange(
-            self._RANGE_START, self._RANGE_END, self._STEP_SIZE)
-        if self._STEP_RESET:
-            tempArr = np.delete(
-                self._outputArr, np.where(self._outputArr == 0))
-            self._outputArr = np.zeros(2 * tempArr.size)
-            self._outputArr[1::2] = tempArr
 
     def updateProgress(self, value):
         pass
@@ -246,7 +189,7 @@ class Controler():
             ])
             self.runningProgress += 100 / len(self._outputArr)
             self.updateProgress(self.runningProgress)
-                        
+
             # write next value to output if it is within the range
             if self._outputArr.any():
                 taskMaster.write([self._outputArr[0]])
@@ -254,7 +197,6 @@ class Controler():
             else:
                 print('Stop')
                 taskSlave.stop()
-
 
             # dt = (t - t0) / 10 ** 6 # convert ns to ms
             # print(f'{number_of_samples} samples in {dt:.3f}', end='\r')
@@ -274,9 +216,9 @@ class Controler():
         # self.wait()
         while self.runningProgress < 100:
             # wait until it's done
-            # allow the daq to process the routine before it moves to next step 
+            # allow the daq to process the routine before it moves to next step
             time.sleep(0.001)
-            
+
         taskSlave.stop()
         taskSlave.close()
 
@@ -312,96 +254,96 @@ class Controler():
 
         print('Done!')
 
-    def run_(self):
-        """
-        run() is the core of the class.
-            - It calls the experiment confg
-            - Starts the tasks
-            - Runs the routines and stores internally the data
-        """
-        # reset data
-        self._xpconfig()
-        self._daqdata = pd.DataFrame({key: []
-                                      for key in range(self._nChannels)})
-        self._clock = {'time': []}
+    # def run_(self):
+    #     """
+    #     run() is the core of the class.
+    #         - It calls the experiment confg
+    #         - Starts the tasks
+    #         - Runs the routines and stores internally the data
+    #     """
+    #     # reset data
+    #     self._xpconfig()
+    #     self._daqdata = pd.DataFrame({key: []
+    #                                   for key in range(self._nChannels)})
+    #     self._clock = {'time': []}
 
-        # Start tasks and add channels
-        # Master modulates the laser
-        taskMaster = mx.Task('Master')
-        taskMaster.ao_channels.add_ao_voltage_chan(
-            f'Dev1/{self._OUT_CHANNEL[0]}')
+    #     # Start tasks and add channels
+    #     # Master modulates the laser
+    #     taskMaster = mx.Task('Master')
+    #     taskMaster.ao_channels.add_ao_voltage_chan(
+    #         f'Dev1/{self._OUT_CHANNEL[0]}')
 
-        # Slave perform readings
-        taskSlave = mx.Task('Slave')
-        # Add channels to slave
-        taskSlave.ai_channels.add_ai_voltage_chan(
-            f'Dev1/ai{self._IN_CHANNELS[0][-1]}:{self._IN_CHANNELS[-1][-1]}')
+    #     # Slave perform readings
+    #     taskSlave = mx.Task('Slave')
+    #     # Add channels to slave
+    #     taskSlave.ai_channels.add_ai_voltage_chan(
+    #         f'Dev1/ai{self._IN_CHANNELS[0][-1]}:{self._IN_CHANNELS[-1][-1]}')
 
-        # Configure the DAQ internal clock
-        # samps_per_chan (Optional[long]): Specifies the number of
-        #         samples to acquire or generate for each channel in the
-        #         task if **sample_mode** is **FINITE_SAMPLES**. If
-        #         **sample_mode** is **CONTINUOUS_SAMPLES**, NI-DAQmx uses
-        #         this value to determine the buffer size.
-        # access the sample_mode by:
-        # print(taskSlave.timing.samp_quant_samp_mode)
-        taskSlave.timing.cfg_samp_clk_timing(
-            rate=self._SAMPLING_RATE,
-            sample_mode=AcquisitionType.FINITE,
-            samps_per_chan=self._INTERNAL_SAMPLES_PER_CH
-        )
+    #     # Configure the DAQ internal clock
+    #     # samps_per_chan (Optional[long]): Specifies the number of
+    #     #         samples to acquire or generate for each channel in the
+    #     #         task if **sample_mode** is **FINITE_SAMPLES**. If
+    #     #         **sample_mode** is **CONTINUOUS_SAMPLES**, NI-DAQmx uses
+    #     #         this value to determine the buffer size.
+    #     # access the sample_mode by:
+    #     # print(taskSlave.timing.samp_quant_samp_mode)
+    #     taskSlave.timing.cfg_samp_clk_timing(
+    #         rate=self._SAMPLING_RATE,
+    #         sample_mode=AcquisitionType.FINITE,
+    #         samps_per_chan=self._INTERNAL_SAMPLES_PER_CH
+    #     )
 
-        # array with all steps linear arranged in a numpy array
-        self._outputArr = np.arange(
-            self._RANGE_START, self._RANGE_END, self._STEP_SIZE)
+    #     # array with all steps linear arranged in a numpy array
+    #     self._outputArr = np.arange(
+    #         self._RANGE_START, self._RANGE_END, self._STEP_SIZE)
 
-        # There's a faster way to do this ramping using a callback function
-        # Switching tasks on and off consumes time (~ 0.02 s)
-        for val in tqdm(self._outputArr, desc='Ramping.. '):
+    #     # There's a faster way to do this ramping using a callback function
+    #     # Switching tasks on and off consumes time (~ 0.02 s)
+    #     for val in tqdm(self._outputArr, desc='Ramping.. '):
 
-            # acquire time
-            self._clock['time'].append(time.time_ns() / 10 ** 9)
-            # set voltage output
-            taskMaster.write([val], auto_start=True)
-            taskMaster.stop()
-            # self._clock['time1'].append(time.time_ns() / 10 ** 9)
+    #         # acquire time
+    #         self._clock['time'].append(time.time_ns() / 10 ** 9)
+    #         # set voltage output
+    #         taskMaster.write([val], auto_start=True)
+    #         taskMaster.stop()
+    #         # self._clock['time1'].append(time.time_ns() / 10 ** 9)
 
-            # read and concat to previous data
-            self._daqdata = pd.concat([
-                self._daqdata,
-                pd.DataFrame(
-                    taskSlave.read(
-                        number_of_samples_per_channel=self._SAMPLES_PER_CH_TO_READ)
-                ).T
-            ])
-            taskSlave.stop()
-            # self._clock['time2'].append(time.time_ns() / 10 ** 9)
+    #         # read and concat to previous data
+    #         self._daqdata = pd.concat([
+    #             self._daqdata,
+    #             pd.DataFrame(
+    #                 taskSlave.read(
+    #                     number_of_samples_per_channel=self._SAMPLES_PER_CH_TO_READ)
+    #             ).T
+    #         ])
+    #         taskSlave.stop()
+    #         # self._clock['time2'].append(time.time_ns() / 10 ** 9)
 
-        taskMaster.write([0.0], auto_start=True)
-        taskMaster.close()
-        taskSlave.close()
+    #     taskMaster.write([0.0], auto_start=True)
+    #     taskMaster.close()
+    #     taskSlave.close()
 
-        self._daqdata.reset_index(drop=True, inplace=True)
-        # arrange time to DataFrame
-        # change this if self._SAMPLES_PER_CH_TO_READ is set to somthing different than READ_ALL_AVAILABLE
-        self._clock = pd.DataFrame(
-            self._clock,
-            index=self._daqdata.iloc[::self._INTERNAL_SAMPLES_PER_CH].index
-        )
+    #     self._daqdata.reset_index(drop=True, inplace=True)
+    #     # arrange time to DataFrame
+    #     # change this if self._SAMPLES_PER_CH_TO_READ is set to somthing different than READ_ALL_AVAILABLE
+    #     self._clock = pd.DataFrame(
+    #         self._clock,
+    #         index=self._daqdata.iloc[::self._INTERNAL_SAMPLES_PER_CH].index
+    #     )
 
-        # set initial to zero
-        self._clock['time'] -= self._clock['time'][0]
+    #     # set initial to zero
+    #     self._clock['time'] -= self._clock['time'][0]
 
-        # concat clock and daqdata
-        self._data = pd.concat([self._clock, self._daqdata], axis=1)
+    #     # concat clock and daqdata
+    #     self._data = pd.concat([self._clock, self._daqdata], axis=1)
 
-        # linear inerpolation // it doesn't consider the 0.02 s between the tasks.
-        self._data['time'].interpolate(inplace=True)
+    #     # linear inerpolation // it doesn't consider the 0.02 s between the tasks.
+    #     self._data['time'].interpolate(inplace=True)
 
-        # include details to log
-        self.updatelog()
+    #     # include details to log
+    #     self.updatelog()
 
-        print('Done!')
+    #     print('Done!')
 
     def data(self):
         """Returns the consolidate data with time attached
@@ -500,63 +442,3 @@ class Controler():
                 print('Data already saved...')
         else:
             print('No data to save...')
-
-    def initializeplotgui(self):
-        """Initialize matplotlib figure and axes interface.
-        """
-        # Get configs dynamically without the need to run the experiment again
-        # in order to update the plot settings
-        dynamConfig = configparser.ConfigParser()
-        dynamConfig.read("config.txt")
-        gConfig = dynamConfig['Graph Settings']
-        pl.rcParams.update({'font.size': float(gConfig['font size'])})
-        # 1 subplot per channel
-        self._fig, self._axs = pl.subplots(self._nChannels, sharex=True,
-                                           figsize=[
-                                               float(i) for i in gConfig['graph size'].split(',')]
-                                           )
-        self._axs[-1].set_xlabel('Time (s)')
-
-        pl.ion()
-
-    def plot(self):
-        """
-        Plots the data from channels vs time
-        """
-
-        if not self._data.empty:
-            if pl.get_fignums() == []:
-                self.initializeplotgui()
-            dynamConfig = configparser.ConfigParser()
-            dynamConfig.read("config.txt")
-            gConfig = dynamConfig['Graph Settings']
-            cConfig = self._config['Channels']
-            extraPConfig = self._config['Extra Parameters']
-
-            self._axs[0].set_title(gConfig['title'])
-            if self._axs[0].lines:
-                action = input('Overwrite data? [y or press enter]: ')
-                if action == 'y':
-                    for n in range(self._nChannels):
-                        self._axs[n].lines = []
-            for n in range(self._nChannels):
-                label = extraPConfig[gConfig['label']
-                                     ] if gConfig['label'] in extraPConfig else gConfig['label']
-                self._axs[n].plot(self._data['time'], self._data[n], label=label,
-                                  marker=gConfig['marker'],
-                                  ms=float(gConfig['marker size']),
-                                  color=gConfig['colour'],
-                                  alpha=float(gConfig['alpha']),
-                                  linestyle=gConfig['line style'],
-                                  lw=float(gConfig['line width'])
-                                  )
-                self._axs[n].legend(
-                    title=f"Ch.{n}: {cConfig[self._IN_CHANNELS[n]]}")
-                self._axs[n].set_ylabel('Input (V)')
-                self._axs[n].grid(gConfig['grid'])
-
-            self._fig.tight_layout()
-            self._fig.show()
-            print('Data plotted...')
-        else:
-            print('No data to plot...')
