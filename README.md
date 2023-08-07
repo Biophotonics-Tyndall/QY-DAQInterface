@@ -1,5 +1,5 @@
 # QY-DAQInterface
-## QyApp v1.1.0 **Beta**
+## QyApp v2.0.0 **Beta**
 
 Available for production environment on MS Windows, MacOS and Linux.
 
@@ -25,6 +25,7 @@ To use the controller make sure that the DAQ is connected to the computer by USB
 
 ## Folder structure
 
++ [gui/](./gui/): Includes the code with a graphical user interface to control the QY system 
 + [setup/](./setup/): Auxiliary files to install required packages
 + [docs/](./docs/): Manuals and Ni-DAQ6212 datasheets. (This files might not be available on github repository)
 + [data/](./data/): Folder where the acquired raw-data is saved
@@ -34,6 +35,15 @@ To use the controller make sure that the DAQ is connected to the computer by USB
 
 ## User manual
 
+### Graphical User Interface (GUI)
+v2.0.0 includes a beta GUI of the controller. To start it, run the app.py file in the gui folder.
+
+![GUI](docs/.gui.png "GUI")
+
+The parameters on the left hand side can be adjusted accordingly for the experiment.
+The `Run` button sends the settings to the DAQ controller, which controls the actual device. Once the acquisition is completed, the data are plotted on the panel on the right. The `Save` button saves the data and settings in the data directory. Each dataset is stored with an unique id (date_time of the acquisition).      
+
+### Command Line Interface (CLI)
 For windows, on the root folder double click on _QyApp.bat_ file. This file will call python in a cmd and run the main code. The following user panel shall start. 
 
 ![User Panel](docs/.user_panel.png "User Panel")
@@ -53,6 +63,8 @@ With data acquired the data is displayed in a dynamic graph with one subplot per
 ---
 
 ## Updates
+
+v2.0.0 - GUI available
 
 v1.1.0 - Minor update on measurement. New feature included
 - [x] Include option on measurement to return laser current to 0 before ramping up to next step.
