@@ -224,13 +224,13 @@ class SettingsForm(QWidget):
         if self.status == STATUS.READY:
             if self.measurementSettings.sampleLineEdit.text() \
                     and self.measurementSettings.referenceLineEdit.text():
-                self.runAcquisition()
+                # self.runAcquisition()
                 self.updateStatus(STATUS.RUNNING)
                 self.progress.show()
                 self.setDaqConfig()
                 self.daq.run()
                 self.daq.updatelog()
-                self.stopAcquisition()
+                # self.stopAcquisition()
                 self.progress.hide()
                 self.updateStatus(STATUS.DATANOTSAVED)
                 self.saveButton.setEnabled(True)

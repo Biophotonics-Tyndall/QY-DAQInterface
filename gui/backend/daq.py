@@ -16,7 +16,7 @@ from PyQt5.QtCore import QThread
 class Controller(QThread):
     """
     """
-    debug = True
+    debug = False
     _daqdata = pd.DataFrame()
     _clock = {}
     _data = pd.DataFrame({
