@@ -275,11 +275,11 @@ class ControlSettings(SettingsBlock):
 
         self.setStepSpinBox()
 
-    def setStepSpinBox(self):
+    def setStepSpinBox(self, value=None):
         maxV = self.endSpinBox.value() - self.startSpinBox.value()
         minV = 0.001
         self.stepSpinBox.setRange(minV, maxV)
-        self.stepSpinBox.setSingleStep(minV)
+        self.stepSpinBox.setSingleStep(value or minV)
 
     def handleOnChangeEndSpinBox(self, value):
         self.startSpinBox.setMaximum(value)

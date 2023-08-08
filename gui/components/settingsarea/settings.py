@@ -196,6 +196,14 @@ class SettingsForm(QWidget):
             self.daq._outputArr = np.zeros(2 * tempArr.size)
             self.daq._outputArr[1::2] = tempArr
 
+    def runAcquisition(self):
+        self.daq.start()
+
+    def stopAcquisition(self):
+        if self.daq.isRunning():
+            self.daq.quit()
+            self.daq.wait()
+
     def save(self):
         self.updateStatus(STATUS.SAVINGDATA)
         self.daq.save()
@@ -211,15 +219,18 @@ class SettingsForm(QWidget):
                 self.save()
             else:
                 self.updateStatus(STATUS.READY)
+                self.saveButton.setEnabled(False)
 
         if self.status == STATUS.READY:
             if self.measurementSettings.sampleLineEdit.text() \
                     and self.measurementSettings.referenceLineEdit.text():
+                self.runAcquisition()
                 self.updateStatus(STATUS.RUNNING)
                 self.progress.show()
                 self.setDaqConfig()
                 self.daq.run()
                 self.daq.updatelog()
+                self.stopAcquisition()
                 self.progress.hide()
                 self.updateStatus(STATUS.DATANOTSAVED)
                 self.saveButton.setEnabled(True)

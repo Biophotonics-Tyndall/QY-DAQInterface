@@ -10,11 +10,10 @@ from nidaqmx.constants import (
 )
 import getpass
 import pandas as pd
-# import matplotlib
-# matplotlib.use('TkAgg')
+from PyQt5.QtCore import QThread
 
 
-class Controller():
+class Controller(QThread):
     """
     """
     debug = True
@@ -68,9 +67,11 @@ class Controller():
 
     _NOTES = ""
 
-    def __init__(self):
+    def __init__(self, parent=None):
         """Initialize data and clock variables
         """
+        super(Controller, self).__init__(parent)
+
         with open('../docs/.software.json', 'r') as f:
             self._appDetails = json.load(f)
 
