@@ -161,6 +161,7 @@ class APD1Settings(SettingsBlock):
         # Wavelength of measurement
         self.detectionWavelengthSpinBox = QSpinBox()
         self.detectionWavelengthSpinBox.setRange(300, 1200)
+        self.detectionWavelengthSpinBox.setValue(470)
 
         self.addRow(label="Wavelength", widget=self.detectionWavelengthSpinBox)
 
@@ -200,6 +201,7 @@ class APD2Settings(SettingsBlock):
         # Wavelength of measurement
         self.detectionWavelengthSpinBox = QSpinBox()
         self.detectionWavelengthSpinBox.setRange(300, 1200)
+        self.detectionWavelengthSpinBox.setValue(470)
 
         self.addRow(label="Wavelength", widget=self.detectionWavelengthSpinBox)
 
@@ -272,14 +274,14 @@ class ControlSettings(SettingsBlock):
         self.endSpinBox.setRange(minV, maxV)
         self.endSpinBox.setValue(maxV)
         self.endSpinBox.setSingleStep(step)
-
-        self.setStepSpinBox()
+        self.setStepSpinBox(value=step)
 
     def setStepSpinBox(self, value=None):
         maxV = self.endSpinBox.value() - self.startSpinBox.value()
         minV = 0.001
+        self.stepSpinBox.setValue(value or minV)
         self.stepSpinBox.setRange(minV, maxV)
-        self.stepSpinBox.setSingleStep(value or minV)
+        self.stepSpinBox.setSingleStep(minV)
 
     def handleOnChangeEndSpinBox(self, value):
         self.startSpinBox.setMaximum(value)
@@ -305,7 +307,7 @@ class AcquisitionSettings(SettingsBlock):
 
         # Sampling
         self.samplingSpinBar = QSpinBox()
-        self.samplingSpinBar.setMaximum(50000)
+        self.samplingSpinBar.setRange(100, 50000)
         self.samplingSpinBar.setValue(1000)
         self.samplingSpinBar.setSingleStep(50)
         self.samplingSpinBar.setToolTip('The number of samples per step')
@@ -315,9 +317,10 @@ class AcquisitionSettings(SettingsBlock):
         # Timing
         self.timingSpinBar = QDoubleSpinBox()
         self.timingSpinBar.setDecimals(1)
+        self.timingSpinBar.setRange(0.001, 10)
         self.timingSpinBar.setValue(0.3)
         self.timingSpinBar.setToolTip(
-            'It refers to the time taken to acquire the number of samples per step set above')
+            'It refers to the time (in seconds) taken to acquire the number of samples per step set above')
 
         self.addRow(label="Time per step", widget=self.timingSpinBar)
 

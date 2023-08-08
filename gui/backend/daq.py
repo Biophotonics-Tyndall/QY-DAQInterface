@@ -10,10 +10,9 @@ from nidaqmx.constants import (
 )
 import getpass
 import pandas as pd
-from PyQt5.QtCore import QThread
 
 
-class Controller(QThread):
+class Controller():
     """
     """
     debug = False
@@ -70,7 +69,6 @@ class Controller(QThread):
     def __init__(self, parent=None):
         """Initialize data and clock variables
         """
-        super(Controller, self).__init__(parent)
 
         with open('../docs/.software.json', 'r') as f:
             self._appDetails = json.load(f)
@@ -159,14 +157,6 @@ class Controller(QThread):
             min_val=self._MIN_READING_VAL, max_val=self._MAX_READING_VAL
         )
 
-        # Configure the DAQ internal clock
-        # samps_per_chan (Optional[long]): Specifies the number of
-        #         samples to acquire or generate for each channel in the
-        #         task if **sample_mode** is **FINITE_SAMPLES**. If
-        #         **sample_mode** is **CONTINUOUS_SAMPLES**, NI-DAQmx uses
-        #         this value to determine the buffer size.
-        # access the sample_mode by:
-        # print(taskSlave.timing.samp_quant_samp_mode)
         taskSlave.timing.cfg_samp_clk_timing(
             rate=self._SAMPLING_RATE,
             sample_mode=AcquisitionType.CONTINUOUS,
@@ -178,8 +168,6 @@ class Controller(QThread):
         def callback(task_handle, every_n_samples_event_type,
                      number_of_samples, callback_data):
 
-            # samples = task.read(number_of_samples_per_channel=200)
-            # t = time.time_ns()
             self._clock['time'].append(time.time_ns())
             self._daqdata = pd.concat([
                 self._daqdata,
@@ -199,11 +187,8 @@ class Controller(QThread):
                 print('Stop')
                 taskSlave.stop()
 
-            # dt = (t - t0) / 10 ** 6 # convert ns to ms
-            # print(f'{number_of_samples} samples in {dt:.3f}', end='\r')
             return 0
 
-        # self._outputArr = np.arange(self._RANGE_START, self._RANGE_END, self._STEP_SIZE)
 
         taskSlave.register_every_n_samples_acquired_into_buffer_event(
             self._INTERNAL_SAMPLES_PER_CH, callback)
@@ -213,8 +198,6 @@ class Controller(QThread):
         t0 = time.time_ns()  # acquire initial t in ns
         taskSlave.start()
 
-        # taskMaster.wait_until_done()
-        # self.wait()
         while self.runningProgress < 100:
             # wait until it's done
             # allow the daq to process the routine before it moves to next step
@@ -255,97 +238,6 @@ class Controller(QThread):
 
         print('Done!')
 
-    # def run_(self):
-    #     """
-    #     run() is the core of the class.
-    #         - It calls the experiment confg
-    #         - Starts the tasks
-    #         - Runs the routines and stores internally the data
-    #     """
-    #     # reset data
-    #     self._xpconfig()
-    #     self._daqdata = pd.DataFrame({key: []
-    #                                   for key in range(self._nChannels)})
-    #     self._clock = {'time': []}
-
-    #     # Start tasks and add channels
-    #     # Master modulates the laser
-    #     taskMaster = mx.Task('Master')
-    #     taskMaster.ao_channels.add_ao_voltage_chan(
-    #         f'Dev1/{self._OUT_CHANNEL[0]}')
-
-    #     # Slave perform readings
-    #     taskSlave = mx.Task('Slave')
-    #     # Add channels to slave
-    #     taskSlave.ai_channels.add_ai_voltage_chan(
-    #         f'Dev1/ai{self._IN_CHANNELS[0][-1]}:{self._IN_CHANNELS[-1][-1]}')
-
-    #     # Configure the DAQ internal clock
-    #     # samps_per_chan (Optional[long]): Specifies the number of
-    #     #         samples to acquire or generate for each channel in the
-    #     #         task if **sample_mode** is **FINITE_SAMPLES**. If
-    #     #         **sample_mode** is **CONTINUOUS_SAMPLES**, NI-DAQmx uses
-    #     #         this value to determine the buffer size.
-    #     # access the sample_mode by:
-    #     # print(taskSlave.timing.samp_quant_samp_mode)
-    #     taskSlave.timing.cfg_samp_clk_timing(
-    #         rate=self._SAMPLING_RATE,
-    #         sample_mode=AcquisitionType.FINITE,
-    #         samps_per_chan=self._INTERNAL_SAMPLES_PER_CH
-    #     )
-
-    #     # array with all steps linear arranged in a numpy array
-    #     self._outputArr = np.arange(
-    #         self._RANGE_START, self._RANGE_END, self._STEP_SIZE)
-
-    #     # There's a faster way to do this ramping using a callback function
-    #     # Switching tasks on and off consumes time (~ 0.02 s)
-    #     for val in tqdm(self._outputArr, desc='Ramping.. '):
-
-    #         # acquire time
-    #         self._clock['time'].append(time.time_ns() / 10 ** 9)
-    #         # set voltage output
-    #         taskMaster.write([val], auto_start=True)
-    #         taskMaster.stop()
-    #         # self._clock['time1'].append(time.time_ns() / 10 ** 9)
-
-    #         # read and concat to previous data
-    #         self._daqdata = pd.concat([
-    #             self._daqdata,
-    #             pd.DataFrame(
-    #                 taskSlave.read(
-    #                     number_of_samples_per_channel=self._SAMPLES_PER_CH_TO_READ)
-    #             ).T
-    #         ])
-    #         taskSlave.stop()
-    #         # self._clock['time2'].append(time.time_ns() / 10 ** 9)
-
-    #     taskMaster.write([0.0], auto_start=True)
-    #     taskMaster.close()
-    #     taskSlave.close()
-
-    #     self._daqdata.reset_index(drop=True, inplace=True)
-    #     # arrange time to DataFrame
-    #     # change this if self._SAMPLES_PER_CH_TO_READ is set to somthing different than READ_ALL_AVAILABLE
-    #     self._clock = pd.DataFrame(
-    #         self._clock,
-    #         index=self._daqdata.iloc[::self._INTERNAL_SAMPLES_PER_CH].index
-    #     )
-
-    #     # set initial to zero
-    #     self._clock['time'] -= self._clock['time'][0]
-
-    #     # concat clock and daqdata
-    #     self._data = pd.concat([self._clock, self._daqdata], axis=1)
-
-    #     # linear inerpolation // it doesn't consider the 0.02 s between the tasks.
-    #     self._data['time'].interpolate(inplace=True)
-
-    #     # include details to log
-    #     self.updatelog()
-
-    #     print('Done!')
-
     def data(self):
         """Returns the consolidate data with time attached
         """
@@ -358,7 +250,6 @@ class Controller(QThread):
         log = pd.DataFrame(columns=self._log.columns, index=[0])
 
         log['exp_id'] = now
-        # log['out_ch'] = self._OUT_CHANNEL[0]
         log['out_ch'] = '/'.join([
             f"{ch}={self._config['Channels'][ch]}" for ch in self._OUT_CHANNEL
         ])
@@ -367,7 +258,6 @@ class Controller(QThread):
         log['range_end'] = self._RANGE_END
         log['range_step_size'] = self._STEP_SIZE
         log['pulsed'] = self._STEP_RESET
-        # log['in_chs'] = ' '.join(self._IN_CHANNELS)
         log['in_chs'] = '/'.join([
             f"{ch}={self._config['Channels'][ch]}" for ch in self._IN_CHANNELS
         ])

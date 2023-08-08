@@ -25,8 +25,8 @@ class LASERS:
 
 
 class POWERMETERS:
-    PMSRANGES = ['69 nm']
-    PMRRANGES = ['61 nm']
+    PMSRANGES = ['250 uW', '2.5 mW', '10 mW', '69 mW', '690 mW']
+    PMRRANGES = ['2.2 mW', '6.1 mW', '9.5 mW', '22 mW', '61 mW']
 
 
 class APDS:
