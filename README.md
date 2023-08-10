@@ -1,5 +1,5 @@
 # QY-DAQInterface
-## QyApp v2.0.0 **Beta**
+## QyApp v2.0.0
 
 Available for production environment on MS Windows, MacOS and Linux.
 
@@ -13,9 +13,10 @@ The installation requires **_Python 3.4_** or above versions as well as its pack
 
 1. Download all the content from https://github.com/Biophotonics-Tyndall/QY-DAQInterface/tree/master
 2. Open the folder [setup](/setup) and double-click the [install.bat](./setup/install.bat) file.
-3. Return to the root folder and double-click the [QYAPPv110](./QyAPPv110.bat) file. 
+3. To open the CLI, return to the root folder and double-click the [QYAPPv110](./QyAPPv110.bat) file. 
+4. To open the GUI, return to the root folder and double-click the [QY-GUIv200](./Qy-GUIv200.bat) file. 
 
-Once installed, just repeat the step 3. to use the controller. 
+Once installed, just repeat the step 3 or 4 to use the controller. 
 
 ## Running the controller
 
