@@ -30,3 +30,6 @@ data/datalogs.csv
 
 # VSCode profile settings
 .vscode/
+
+# old codes
+archive/

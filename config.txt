@@ -50,19 +50,19 @@ AI4 = APD2
 # Include more if needed. These values will be stored 
 # on the datalogs.csv file
 
-sample = sulfo_DBCO_amine_ucnps_batch1
-reference = empty
+sample = none
+reference = ethanol
 sonication time = -
-pms range = 69mW
-pmr range = 61mW
+pms range = 250uW
+pmr range = 2.2mW
 APD1 gain = max
 APD2 gain = max
 APD1 wavelength = 800nm
-APD2 wavelength = 472nm
+APD2 wavelength = 470nm
 attenuation = 0
-spot size = s2
-laser wavelength = 976nm
-comments = -
+spot size = s1
+laser wavelength = 405nm
+comments = apd2 calib
 
 ##################################################################
 [Graph Settings]
@@ -74,7 +74,7 @@ graph size = 7,7
 font size = 12
 title = QY setup
 label = sample
-colour = b
+colour = deepskyblue
 alpha = 0.5
 marker = h
 marker size = 5
